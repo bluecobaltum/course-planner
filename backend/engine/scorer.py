@@ -55,6 +55,24 @@ def _get_occupied_periods(plan: list[dict[str, Any]]) -> dict[int, set[int]]:
     return dict(occupied)
 
 
+def _safe_credits(course: dict[str, Any]) -> int:
+    """Safely extract credits from a course dict, defaulting to 0."""
+    try:
+        v = course.get("credits")
+        return int(v) if v is not None else 0
+    except (TypeError, ValueError):
+        return 0
+
+
+def _safe_rating(course: dict[str, Any]) -> float | None:
+    """Safely extract teacher rating from a course dict, or None if missing."""
+    try:
+        v = course.get("teacher", {}).get("rating")
+        return float(v) if v is not None else None
+    except (TypeError, ValueError, KeyError):
+        return None
+
+
 # ── Base Dimension Scoring ───────────────────────────────────
 
 
@@ -63,16 +81,20 @@ def compute_gpa_score(plan: list[dict[str, Any]]) -> float:
 
     Formula: avg(rating) × 2
     Range: 2.0 (all 1.0 ratings) to 10.0 (all 5.0 ratings).
+    Missing or invalid ratings default to 3.0 (middle of the scale).
 
     Args:
         plan: List of course dicts with teacher.rating field.
-
-    Returns:
-        GPA score in [2.0, 10.0].
     """
-    ratings = [c["teacher"]["rating"] for c in plan]
+    ratings = []
+    for c in plan:
+        r = _safe_rating(c)
+        if r is not None:
+            ratings.append(r)
+
     if not ratings:
-        return 5.0  # fallback for empty plan
+        return 3.0 * 2  # all missing → default to middle
+
     return round(sum(ratings) / len(ratings) * 2, 1)
 
 
@@ -135,7 +157,7 @@ def compute_stress_score(plan: list[dict[str, Any]]) -> float:
     Returns:
         Stress score in [1.0, 10.0].
     """
-    total_credits = sum(c["credits"] for c in plan)
+    total_credits = sum(_safe_credits(c) for c in plan)
 
     if total_credits <= STRESS_COMFORT_CREDITS:
         return 10.0
@@ -395,7 +417,7 @@ def generate_reasons(
         reasons.append(f"教师平均评分 {avg_rating:.1f}，质量良好")
 
     # ── Credit load ──
-    total_credits = sum(c["credits"] for c in plan)
+    total_credits = sum(_safe_credits(c) for c in plan)
     if total_credits <= 18:
         reasons.append(f"仅 {total_credits} 学分，学业压力很小")
     elif total_credits >= 24:
@@ -487,7 +509,7 @@ def match_strategies(
                 c["teacher"]["rating"] < 4.5 for c in plan
             )
         elif sid == "credit-density-control":
-            total_credits = sum(c["credits"] for c in plan)
+            total_credits = sum(_safe_credits(c) for c in plan)
             triggered = total_credits >= 22 or total_credits <= 16
         elif sid == "elective-strategy":
             # Triggered if the plan includes at least one easy course

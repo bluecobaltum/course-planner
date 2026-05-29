@@ -8,7 +8,6 @@ Hard constraints (violation = elimination):
   - Time conflict: no two courses overlap in schedule
   - Group mutual exclusion: one section per credit_transfer_group
   - Major coverage: every major group must have exactly one section
-  - Credit range: 15 ≤ total_credits ≤ 25
 
 Soft strategies affect SCORING only — no course is ever eliminated by preference.
 """
@@ -23,8 +22,9 @@ from engine.scorer import (
     deduplicate_plans,
     generate_reasons,
     match_strategies,
+    _safe_credits,
 )
-from config.scenarios import SCENARIO_WEIGHTS, MIN_CREDITS, MAX_CREDITS
+from config.scenarios import SCENARIO_WEIGHTS
 
 
 # ── Main Entry Point ─────────────────────────────────────────
@@ -87,12 +87,9 @@ def generate_plans(
     for combo in major_combos:
         filled = _fill_easy_courses(combo, easy_groups, effective_easy_count)
         for plan in filled:
-            total_credits = sum(c["credits"] for c in plan)
-            if MIN_CREDITS <= total_credits <= MAX_CREDITS:
-                plans.append(plan)
+            plans.append(plan)
 
     if not plans:
-        # All combos fall outside credit range
         return []
 
     # ── Step 4: Score all plans ──
