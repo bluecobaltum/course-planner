@@ -65,11 +65,17 @@ def _safe_credits(course: dict[str, Any]) -> int:
 
 
 def _safe_rating(course: dict[str, Any]) -> float | None:
-    """Safely extract teacher rating from a course dict, or None if missing."""
+    """Safely extract teacher rating from a course dict, or None if missing.
+
+    Handles: teacher=None, teacher={}, teacher={'rating': None}, teacher missing.
+    """
     try:
-        v = course.get("teacher", {}).get("rating")
+        teacher = course.get("teacher")
+        if teacher is None or not isinstance(teacher, dict):
+            return None
+        v = teacher.get("rating")
         return float(v) if v is not None else None
-    except (TypeError, ValueError, KeyError):
+    except (TypeError, ValueError):
         return None
 
 
@@ -409,7 +415,7 @@ def generate_reasons(
         reasons.append("下午/晚间完全自由")
 
     # ── Teacher quality ──
-    ratings = [c["teacher"]["rating"] for c in plan]
+    ratings = [_safe_rating(c) for c in plan if _safe_rating(c) is not None]
     avg_rating = sum(ratings) / len(ratings) if ratings else 0
     if avg_rating >= 4.5:
         reasons.append(f"教师平均评分 {avg_rating:.1f}，整体质量优秀")
@@ -506,7 +512,7 @@ def match_strategies(
             # Simplified: trigger if plan has any course with rating < 4.5
             # AND there exists a course in the same group with higher rating
             triggered = any(
-                c["teacher"]["rating"] < 4.5 for c in plan
+                (_safe_rating(c) or 0) < 4.5 for c in plan
             )
         elif sid == "credit-density-control":
             total_credits = sum(_safe_credits(c) for c in plan)

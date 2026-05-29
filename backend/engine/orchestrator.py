@@ -23,6 +23,7 @@ from engine.scorer import (
     generate_reasons,
     match_strategies,
     _safe_credits,
+    _safe_rating,
 )
 from config.scenarios import SCENARIO_WEIGHTS
 
@@ -240,7 +241,7 @@ def _fill_easy_courses(
             sections = easy_groups[gid]
             # Sort by rating descending, take top-2 for diversity
             sorted_sections = sorted(
-                sections, key=lambda c: c["teacher"]["rating"], reverse=True
+                sections, key=lambda c: _safe_rating(c) or 0, reverse=True
             )
             candidates = sorted_sections[:2]
 

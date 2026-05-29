@@ -4,7 +4,7 @@ Defines the fundamental building blocks for course data:
 schedule slots, teachers, locations, and the full course/section record.
 """
 
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -72,11 +72,15 @@ class Course(BaseModel):
         ),
     )
     credits: int = Field(..., ge=1, le=10, description="Credit hours for this course")
-    teacher: Teacher
+    teacher: Optional[Teacher] = Field(
+        default=None, description="Teacher info (None if not yet assigned)"
+    )
     schedule: list[ScheduleSlot] = Field(
         ..., min_length=0, description="Weekly meeting times (empty for async online)"
     )
-    location: Location
+    location: Optional[Location] = Field(
+        default=None, description="Classroom location (None if not yet assigned)"
+    )
     course_type: Literal["major", "easy"] = Field(
         ..., description="'major' = required course, 'easy' = optional/elective"
     )
