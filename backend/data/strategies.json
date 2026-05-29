@@ -1,0 +1,96 @@
+[
+  {
+    "id": "online-course-replacement",
+    "category": "时间优化",
+    "title": "同课不同模式，时间差一倍",
+    "summary": "公共课选网络班/混合班，上课频率降低50%+",
+    "detail": "高等数学等公共课通常有多个平行班。选择网络班或混合班模式，可能只需每两周上一次大课，比传统每周2-3次的班级节省大量通勤和碎片时间。",
+    "icon": "⏱️",
+    "example": {
+      "course": "高等数学A",
+      "traditional": "每周3次 × 2课时 = 6课时/周",
+      "optimized": "每两周1次 × 4课时 = 2课时/周"
+    },
+    "applicable_scenarios": ["no_morning", "morning_only", "easy_mode"],
+    "difficulty": "容易实施",
+    "trigger_condition": {
+      "keywords": ["网课", "线上", "时间少", "省时间"],
+      "scenarios": ["no_morning", "morning_only"],
+      "user_goal": ["节省时间"]
+    },
+    "ai_prompt_fragment": "当用户希望节省通勤时间或减少上课频率时，优先建议选择网络班或混合模式的课程。"
+  },
+  {
+    "id": "teacher-score-diff",
+    "category": "GPA优化",
+    "title": "同一门课，不同老师GPA差距显著",
+    "summary": "同课不同师，最终绩点可能差0.5以上",
+    "detail": "同一门公共必修课往往有多个教师开课。通过对比历年评分数据和学生评价，选择给分合理、教学质量高的教师，可以在不增加学习负担的前提下有效提升GPA。",
+    "icon": "📈",
+    "example": {
+      "course": "大学英语",
+      "teacher_a": { "name": "张老师", "rating": 4.2 },
+      "teacher_b": { "name": "李老师", "rating": 4.7 }
+    },
+    "applicable_scenarios": ["gpa_focus", "all"],
+    "difficulty": "需要信息收集",
+    "trigger_condition": {
+      "keywords": ["GPA", "绩点", "高分", "老师", "选哪个"],
+      "scenarios": ["gpa_focus"],
+      "user_goal": ["提高GPA"]
+    },
+    "ai_prompt_fragment": "当用户提到GPA或想选好老师时，提醒同一门课不同教师评分可能差距0.5以上，建议对比教师评分后再决定。"
+  },
+  {
+    "id": "credit-density-control",
+    "category": "压力管理",
+    "title": "学分密度是关键，别只看总数",
+    "summary": "每周>25学分压力陡增，20-22是黄金区间",
+    "detail": "学分总数不代表实际压力。关键是学分在每周的分布——某些课程学分不高但作业量和项目占据大量课外时间。建议每学期控制在20-22学分，并注意平衡理论课和实践课的配比。",
+    "icon": "⚖️",
+    "applicable_scenarios": ["easy_mode", "all"],
+    "difficulty": "需要经验判断",
+    "trigger_condition": {
+      "keywords": ["轻松", "压力", "学分", "少一点"],
+      "scenarios": ["easy_mode"],
+      "user_goal": ["降低压力"]
+    },
+    "ai_prompt_fragment": "当用户表示想轻松或压力小时，建议控制在18-22学分的黄金区间，并注意课程作业量分布。"
+  },
+  {
+    "id": "elective-strategy",
+    "category": "时间规划",
+    "title": "选修课有讲究，别随便凑学分",
+    "summary": "选对选修课能同时满足多个毕业要求",
+    "detail": "很多选修课可以同时计入通识学分和专业拓展学分。选课时优先查看课程归属类别，一门课尽量覆盖多个毕业要求，减少总修课数量，为高年级腾出时间。",
+    "icon": "🎯",
+    "applicable_scenarios": ["all"],
+    "difficulty": "需要提前规划",
+    "trigger_condition": {
+      "keywords": ["选修", "水课", "凑学分", "毕业"],
+      "scenarios": ["all"],
+      "user_goal": ["高效毕业"]
+    },
+    "ai_prompt_fragment": "当用户选选修课时，建议优先选择可同时计入多个毕业要求的课程，一门课覆盖多个类别。"
+  },
+  {
+    "id": "time-block-optimization",
+    "category": "时间优化",
+    "title": "连续上课不是坏事，碎片时间才是杀手",
+    "summary": "两节课之间空1小时不如连上4小时",
+    "detail": "课表中1小时的碎片间隙最浪费时间——不够回宿舍、不够去图书馆深度工作。宁可把课程集中在连续时间段内，空出完整的半天或全天用于深度学习、实习或休息。",
+    "icon": "🧩",
+    "example": {
+      "bad": "10:00-11:40 上课 → 12:00-13:00 空闲 → 13:00-14:40 上课 → 15:00-16:40 空闲 → 16:40-18:20 上课",
+      "good": "10:00-11:40 上课 → 13:00-16:40 连续上课 → 16:40后完全自由"
+    },
+    "applicable_scenarios": ["morning_only", "no_morning", "all"],
+    "difficulty": "容易实施",
+    "trigger_condition": {
+      "keywords": ["集中", "碎片", "连续", "空出时间"],
+      "scenarios": ["morning_only", "no_morning"],
+      "user_goal": ["时间集中"]
+    },
+    "ai_prompt_fragment": "当用户希望课程集中或不想有碎片时间时，建议将课程安排在连续时间段，避免课间1-2节的间隙。"
+  }
+]
