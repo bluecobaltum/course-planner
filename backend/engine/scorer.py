@@ -179,7 +179,7 @@ def compute_free_score(plan: list[dict[str, Any]]) -> float:
     """Count completely free half-days across the week.
 
     A half-day is "free" if NO occupied periods fall in its range.
-    Morning = periods 1-4, Afternoon = periods 5-10 (includes evening).
+    Morning = periods 1-5, Afternoon+Evening = periods 6-14.
     An entirely empty day contributes 2 free half-days.
 
     Uses _get_occupied_periods to correctly handle cross-session courses
@@ -202,14 +202,14 @@ def compute_free_score(plan: list[dict[str, Any]]) -> float:
             free_count += 2
             continue
 
-        # Morning (periods 1-4) free?
+        # Morning (periods 1-5) free?
         morning_occupied = any(
             MORNING_PERIOD_START <= p <= MORNING_PERIOD_END for p in periods
         )
         if not morning_occupied:
             free_count += 1
 
-        # Afternoon (periods 5-10) free?
+        # Afternoon (periods 6-14) free?
         afternoon_occupied = any(
             AFTERNOON_PERIOD_START <= p <= AFTERNOON_PERIOD_END for p in periods
         )
@@ -285,10 +285,10 @@ def compute_monday_penalty(plan: list[dict[str, Any]]) -> float:
 
 
 def compute_afternoon_penalty(plan: list[dict[str, Any]]) -> float:
-    """Penalty for afternoon/evening classes (periods 5-10).
+    """Penalty for afternoon/evening classes (periods 6-14).
 
-    Counts the number of DAYS that have any class after period 4.
-    Score: max(1.0, 10.0 - afternoon_days × 2.0)
+    Counts the number of DAYS that have any class starting at period ≥ 6.
+    Score: max(1.0, 10.0 - afternoon_days × 1.0)
 
     Primarily used by the "morning_only" scenario to penalize
     any classes that fall outside the morning window.

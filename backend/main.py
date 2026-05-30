@@ -16,6 +16,7 @@ from fastapi.responses import JSONResponse
 
 from routes.schedule import router as schedule_router
 from routes.strategies import router as strategies_router
+from routes.courses import router as courses_router
 from models.response import ErrorResponse
 
 # ── App Initialization ───────────────────────────────────────
@@ -40,6 +41,7 @@ app.add_middleware(
 
 app.include_router(schedule_router)
 app.include_router(strategies_router)
+app.include_router(courses_router)
 
 
 # ── Health Check ─────────────────────────────────────────────

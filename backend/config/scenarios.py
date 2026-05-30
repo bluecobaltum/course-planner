@@ -56,6 +56,17 @@ SCENARIO_WEIGHTS: Dict[str, Dict[str, float]] = {
         "monday_penalty": 0.00,
         "afternoon_penalty": 0.20,
     },
+    "balanced": {
+        "description": "紧凑课表（最大化完整空闲块）",
+        "gpa_score": 0.20,
+        "compact_score": 0.25,
+        "stress_score": 0.10,
+        "free_score": 0.25,
+        "morning_penalty": 0.05,
+        "friday_penalty": 0.10,
+        "monday_penalty": 0.05,
+        "afternoon_penalty": 0.00,
+    },
     "easy_mode": {
         "description": "轻松过渡期",
         "gpa_score": 0.15,
@@ -94,6 +105,10 @@ SCENARIO_META: Dict[str, Dict[str, str]] = {
     "morning_only": {
         "description": "上午集中型",
         "icon": "🏋️",
+    },
+    "balanced": {
+        "description": "紧凑课表",
+        "icon": "📐",
     },
     "easy_mode": {
         "description": "轻松过渡期",

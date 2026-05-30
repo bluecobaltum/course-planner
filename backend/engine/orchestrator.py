@@ -101,7 +101,7 @@ def generate_plans(
         matched = match_strategies(plan, scenario, all_strategies)
 
         analysis = {
-            "total_credits": sum(c["credits"] for c in plan),
+            "total_credits": sum(_safe_credits(c) for c in plan),
             "school_days": _compute_school_days(plan),
             "earliest_period": _compute_earliest_period(plan),
             "score_breakdown": breakdown,
