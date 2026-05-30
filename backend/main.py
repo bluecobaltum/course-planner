@@ -10,6 +10,9 @@ API Endpoints:
     GET  /api/health              — Health check
 """
 
+from dotenv import load_dotenv
+load_dotenv()  # Load .env file before anything else
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -17,6 +20,7 @@ from fastapi.responses import JSONResponse
 from routes.schedule import router as schedule_router
 from routes.strategies import router as strategies_router
 from routes.courses import router as courses_router
+from routes.import_router import router as import_router
 from models.response import ErrorResponse
 
 # ── App Initialization ───────────────────────────────────────
@@ -42,6 +46,7 @@ app.add_middleware(
 app.include_router(schedule_router)
 app.include_router(strategies_router)
 app.include_router(courses_router)
+app.include_router(import_router)
 
 
 # ── Health Check ─────────────────────────────────────────────

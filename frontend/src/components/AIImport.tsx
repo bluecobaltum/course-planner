@@ -6,7 +6,7 @@ export default function AIImport() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="rounded-2xl border-2 border-dashed border-accent/20 bg-gradient-to-br from-accent/5 to-purple-500/5 p-6 text-center"
+      className="rounded-2xl border-2 border-dashed border-amber-200/60 bg-gradient-to-br from-amber-50/30 to-amber-100/20 p-6 text-center"
     >
       <div className="flex justify-center mb-4">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10">
@@ -24,14 +24,14 @@ export default function AIImport() {
       <div className="flex items-center justify-center gap-3 flex-wrap">
         <button
           disabled
-          className="flex items-center gap-2 rounded-xl border border-border/40 bg-white/60 px-4 py-2.5 text-sm font-medium text-text-tertiary cursor-not-allowed"
+          className="flex items-center gap-2 rounded-xl border border-border/40 bg-paper/60 px-4 py-2.5 text-sm font-medium text-text-tertiary cursor-not-allowed"
         >
           <Upload className="h-4 w-4" />
           上传 Excel
         </button>
         <button
           disabled
-          className="flex items-center gap-2 rounded-xl border border-border/40 bg-white/60 px-4 py-2.5 text-sm font-medium text-text-tertiary cursor-not-allowed"
+          className="flex items-center gap-2 rounded-xl border border-border/40 bg-paper/60 px-4 py-2.5 text-sm font-medium text-text-tertiary cursor-not-allowed"
         >
           <FileText className="h-4 w-4" />
           上传截图

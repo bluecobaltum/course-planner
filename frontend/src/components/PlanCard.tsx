@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lightbulb, Trophy, Clock, GraduationCap, MapPin } from "lucide-react";
+import { Lightbulb, Trophy, Clock, GraduationCap, MapPin, ChevronDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import CourseRow from "./CourseRow";
@@ -46,6 +47,16 @@ export default function PlanCard({
     strategies
   );
   const { analysis } = plan;
+  const [showAllCourses, setShowAllCourses] = useState(false);
+
+  const scorePct = plan.score / 10; // 0..1
+  const circumference = 2 * Math.PI * 28;
+  const offset = circumference * (1 - scorePct);
+
+  const displayCourses = showAllCourses
+    ? plan.courses
+    : plan.courses.slice(0, 5);
+  const hiddenCount = plan.courses.length - 5;
 
   return (
     <motion.div
@@ -80,10 +91,43 @@ export default function PlanCard({
 
               <div>
                 <CardTitle className="text-xl">{label}</CardTitle>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-2xl font-bold text-accent">
-                    {plan.score.toFixed(1)}
-                  </span>
+                <div className="flex items-center gap-3 mt-1">
+                  {/* Score Ring */}
+                  <svg width="64" height="64" className="flex-shrink-0">
+                    <circle
+                      cx="32" cy="32" r="28"
+                      fill="none"
+                      stroke="currentColor"
+                      className="text-border/40"
+                      strokeWidth="4"
+                    />
+                    <circle
+                      cx="32" cy="32" r="28"
+                      fill="none"
+                      stroke="url(#scoreGrad)"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={offset}
+                      transform="rotate(-90 32 32)"
+                      className="transition-all duration-1000 ease-out"
+                    />
+                    <defs>
+                      <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#6366f1" />
+                        <stop offset="100%" stopColor="#818cf8" />
+                      </linearGradient>
+                    </defs>
+                    <text
+                      x="32" y="32"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      className="text-xs font-bold"
+                      fill="currentColor"
+                    >
+                      {plan.score.toFixed(1)}
+                    </text>
+                  </svg>
                   <span className="text-xs text-text-tertiary">综合评分</span>
                 </div>
               </div>
@@ -124,9 +168,26 @@ export default function PlanCard({
               课程列表
             </span>
             <div className="mt-2 space-y-1.5">
-              {plan.courses.map((course) => (
+              {displayCourses.map((course) => (
                 <CourseRow key={course.section_id} course={course} />
               ))}
+              {hiddenCount > 0 && !showAllCourses && (
+                <button
+                  onClick={() => setShowAllCourses(true)}
+                  className="flex items-center gap-1.5 w-full justify-center py-2 text-xs font-medium text-accent hover:text-accent-dark transition-colors cursor-pointer"
+                >
+                  <ChevronDown className="h-3.5 w-3.5" />
+                  展开全部 {plan.courses.length} 门课程（还有 {hiddenCount} 门）
+                </button>
+              )}
+              {showAllCourses && hiddenCount > 0 && (
+                <button
+                  onClick={() => setShowAllCourses(false)}
+                  className="flex items-center gap-1.5 w-full justify-center py-2 text-xs font-medium text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                >
+                  收起课程列表
+                </button>
+              )}
             </div>
           </div>
 

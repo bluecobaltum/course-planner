@@ -44,7 +44,7 @@ export default function CourseList({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, height: 0 }}
-              className="flex items-center gap-3 rounded-xl border border-border/40 bg-white/50 p-3 hover:border-accent/20 transition-colors group"
+              className="flex items-center gap-3 rounded-xl border border-border/40 bg-paper/50 p-3 hover:border-accent/20 transition-colors group"
             >
               {/* Type dot */}
               <div

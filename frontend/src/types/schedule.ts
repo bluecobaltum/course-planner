@@ -77,3 +77,23 @@ export interface ErrorResponse {
   detail: string;
   message: string;
 }
+
+// Mirrors backend routes/import_router.py ImportStats + ImportResponse
+export interface ImportStats {
+  course_count: number;
+  processing_time_ms: number;
+  method: string;
+}
+
+export interface ImportResult {
+  success: boolean;
+  method: string;
+  courses: Course[];
+  stats: ImportStats;
+}
+
+export interface ImportError {
+  success: false;
+  error: string;
+  message: string;
+}

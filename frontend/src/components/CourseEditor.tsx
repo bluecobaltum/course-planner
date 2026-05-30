@@ -116,7 +116,7 @@ export default function CourseEditor({
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-accent/30 bg-white/90 backdrop-blur p-6 space-y-5"
+      className="rounded-2xl border border-accent/30 bg-paper/90 backdrop-blur p-6 space-y-5"
     >
       <div className="flex items-center justify-between">
         <h3 className="text-base font-semibold text-text-primary">
@@ -135,7 +135,7 @@ export default function CourseEditor({
             value={sectionId}
             onChange={(e) => setSectionId(e.target.value)}
             placeholder="MATH101-01"
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
         <label className="space-y-1">
@@ -144,7 +144,7 @@ export default function CourseEditor({
             value={courseCode}
             onChange={(e) => setCourseCode(e.target.value)}
             placeholder="MATH101"
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
         <label className="space-y-1 sm:col-span-2">
@@ -153,7 +153,7 @@ export default function CourseEditor({
             value={courseName}
             onChange={(e) => setCourseName(e.target.value)}
             placeholder="高等数学A"
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
       </div>
@@ -166,7 +166,7 @@ export default function CourseEditor({
             value={creditGroup}
             onChange={(e) => setCreditGroup(e.target.value)}
             placeholder={courseCode || "同课程代码"}
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
         <label className="space-y-1">
@@ -177,7 +177,7 @@ export default function CourseEditor({
             max={10}
             value={credits}
             onChange={(e) => setCredits(Number(e.target.value) || 1)}
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
         <label className="space-y-1">
@@ -187,7 +187,7 @@ export default function CourseEditor({
             onChange={(e) =>
               setCourseType(e.target.value as "major" | "easy")
             }
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           >
             {TYPE_OPTIONS.map((o) => (
               <option key={o.v} value={o.v}>
@@ -205,7 +205,7 @@ export default function CourseEditor({
                 e.target.value as "线下传统" | "线上网课" | "线上线下混合"
               )
             }
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           >
             {MODE_OPTIONS.map((o) => (
               <option key={o.v} value={o.v}>
@@ -224,7 +224,7 @@ export default function CourseEditor({
             value={teacherName}
             onChange={(e) => setTeacherName(e.target.value)}
             placeholder="留空表示教师待定"
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
         <label className="space-y-1">
@@ -240,7 +240,7 @@ export default function CourseEditor({
             onChange={(e) =>
               setTeacherRating(Math.min(5, Math.max(1, Number(e.target.value) || 4.0)))
             }
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
       </div>
@@ -263,7 +263,7 @@ export default function CourseEditor({
               onChange={(e) =>
                 updateSlot(i, { day: Number(e.target.value) })
               }
-              className="rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+              className="rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
             >
               {DAY_OPTIONS.map((d) => (
                 <option key={d.v} value={d.v}>
@@ -280,7 +280,7 @@ export default function CourseEditor({
               onChange={(e) =>
                 updateSlot(i, { start: Number(e.target.value) || 1 })
               }
-              className="w-14 rounded-lg border border-border/60 px-2 py-2 text-sm text-center bg-white focus:outline-none focus:border-accent/50"
+              className="w-14 rounded-lg border border-border/60 px-2 py-2 text-sm text-center bg-paper focus:outline-none focus:border-accent/50"
             />
             <span className="text-xs text-text-tertiary">-</span>
             <input
@@ -291,7 +291,7 @@ export default function CourseEditor({
               onChange={(e) =>
                 updateSlot(i, { end: Number(e.target.value) || slot.start })
               }
-              className="w-14 rounded-lg border border-border/60 px-2 py-2 text-sm text-center bg-white focus:outline-none focus:border-accent/50"
+              className="w-14 rounded-lg border border-border/60 px-2 py-2 text-sm text-center bg-paper focus:outline-none focus:border-accent/50"
             />
             <span className="text-xs text-text-tertiary">节</span>
             {slots.length > 1 && (
@@ -316,7 +316,7 @@ export default function CourseEditor({
             value={building}
             onChange={(e) => setBuilding(e.target.value)}
             placeholder="汇文楼"
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
         <label className="space-y-1">
@@ -326,7 +326,7 @@ export default function CourseEditor({
             min={0}
             value={floor}
             onChange={(e) => setFloor(Number(e.target.value) || 0)}
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
         <label className="space-y-1">
@@ -335,7 +335,7 @@ export default function CourseEditor({
             value={room}
             onChange={(e) => setRoom(e.target.value)}
             placeholder="301"
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-white focus:outline-none focus:border-accent/50"
+            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
       </div>

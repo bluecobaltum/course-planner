@@ -15,14 +15,14 @@ export default function StrategyCard({ strategy }: StrategyCardProps) {
   return (
     <motion.div
       layout
-      className="rounded-2xl border border-border/50 bg-white/60 backdrop-blur-sm hover:border-accent/20 transition-colors overflow-hidden"
+      className="rounded-2xl border border-border/50 bg-paper/60 backdrop-blur-sm hover:border-teal/20 transition-colors overflow-hidden"
     >
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center gap-4 p-5 text-left cursor-pointer"
       >
         {/* Icon */}
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/5 text-xl flex-shrink-0">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal/5 text-xl flex-shrink-0">
           {strategy.icon}
         </div>
 

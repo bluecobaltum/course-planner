@@ -1,0 +1,282 @@
+[
+  {
+    "section_id": "PHYS101-03",
+    "course_code": "PHYS101",
+    "course_name": "大学物理A",
+    "credit_transfer_group": "PHYS101",
+    "credits": 4,
+    "teacher": {
+      "name": "邢凡",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 2,
+        "start": 1,
+        "end": 2
+      },
+      {
+        "day": 4,
+        "start": 3,
+        "end": 4
+      }
+    ],
+    "location": {
+      "building": "致理楼",
+      "floor": 1,
+      "room": "301"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "ENGL102-10",
+    "course_code": "ENGL102",
+    "course_name": "大学英语（2）",
+    "credit_transfer_group": "ENGL102",
+    "credits": 4,
+    "teacher": {
+      "name": "方悦娴",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 3,
+        "start": 1,
+        "end": 2
+      },
+      {
+        "day": 2,
+        "start": 3,
+        "end": 4
+      }
+    ],
+    "location": {
+      "building": "汇文楼",
+      "floor": 3,
+      "room": "301"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "PHYS103-08",
+    "course_code": "PHYS103",
+    "course_name": "大学物理实验（1）",
+    "credit_transfer_group": "PHYS103",
+    "credits": 2,
+    "teacher": {
+      "name": "杜博文",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 3,
+        "start": 3,
+        "end": 4
+      }
+    ],
+    "location": {
+      "building": "致理楼",
+      "floor": 1,
+      "room": "301"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "COMP102-02",
+    "course_code": "COMP102",
+    "course_name": "Python程序设计基础",
+    "credit_transfer_group": "COMP102",
+    "credits": 4,
+    "teacher": {
+      "name": "陆张吉",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 2,
+        "start": 7,
+        "end": 8
+      }
+    ],
+    "location": {
+      "building": "致理楼",
+      "floor": 2,
+      "room": "512"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "HIST104-14",
+    "course_code": "HIST104",
+    "course_name": "中国近现代史纲要",
+    "credit_transfer_group": "HIST104",
+    "credits": 2,
+    "teacher": {
+      "name": "赵豆",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 2,
+        "start": 9,
+        "end": 10
+      }
+    ],
+    "location": {
+      "building": "致理楼",
+      "floor": 2,
+      "room": "111"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "ELEC104-04",
+    "course_code": "ELEC104",
+    "course_name": "电路分析基础",
+    "credit_transfer_group": "ELEC104",
+    "credits": 4,
+    "teacher": {
+      "name": "王英",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 1,
+        "start": 11,
+        "end": 12
+      },
+      {
+        "day": 1,
+        "start": 13,
+        "end": 14
+      }
+    ],
+    "location": {
+      "building": "致原楼",
+      "floor": 5,
+      "room": "512"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "MATH102-40",
+    "course_code": "MATH102",
+    "course_name": "高等数学A（2）",
+    "credit_transfer_group": "MATH102",
+    "credits": 4,
+    "teacher": {
+      "name": "陶强",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 4,
+        "start": 11,
+        "end": 12
+      },
+      {
+        "day": 5,
+        "start": 13,
+        "end": 14
+      }
+    ],
+    "location": {
+      "building": "汇文楼",
+      "floor": 1,
+      "room": "102"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "CLUB53-05",
+    "course_code": "CLUB53",
+    "course_name": "羽毛球俱乐部",
+    "credit_transfer_group": "CLUB53",
+    "credits": 1,
+    "teacher": {
+      "name": "莫仕围",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 5,
+        "start": 3,
+        "end": 4
+      }
+    ],
+    "location": {
+      "building": "南区体育馆",
+      "floor": 1,
+      "room": "羽毛球场"
+    },
+    "course_type": "easy",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "ENG17-17",
+    "course_code": "ENG17",
+    "course_name": "金工实习",
+    "credit_transfer_group": "ENG17",
+    "credits": 2,
+    "teacher": {
+      "name": "陈福民",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 4,
+        "start": 7,
+        "end": 8
+      }
+    ],
+    "location": {
+      "building": "致信楼",
+      "floor": 1,
+      "room": "S104"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "ENG17-17",
+    "course_code": "ENG17",
+    "course_name": "金工实习",
+    "credit_transfer_group": "ENG17",
+    "credits": 2,
+    "teacher": {
+      "name": "黄桂坚",
+      "rating": 4.0
+    },
+    "schedule": [
+      {
+        "day": 4,
+        "start": 7,
+        "end": 8
+      }
+    ],
+    "location": {
+      "building": "致信楼",
+      "floor": 1,
+      "room": "S104"
+    },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  }
+]

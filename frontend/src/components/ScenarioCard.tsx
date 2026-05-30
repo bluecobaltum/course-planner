@@ -23,8 +23,8 @@ export default function ScenarioCard({
       className={cn(
         "relative flex flex-col items-start gap-3 rounded-2xl border p-5 text-left transition-all duration-300 cursor-pointer",
         selected
-          ? "border-accent/60 bg-white/90 glow ring-1 ring-accent/20"
-          : "border-border/60 bg-white/60 hover:border-accent/30 hover:bg-white/80 hover:shadow-md"
+          ? "border-accent/60 bg-paper/90 glow ring-1 ring-accent/20"
+          : "border-border/60 bg-paper/60 hover:border-accent/30 hover:bg-paper/80 hover:shadow-md"
       )}
     >
       {/* Glow bar on top when selected */}

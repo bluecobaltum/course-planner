@@ -1,0 +1,81 @@
+[
+  {
+    "section_id": "CS401-01",
+    "course_code": "CS401",
+    "course_name": "人工智能导论",
+    "credit_transfer_group": "CS401",
+    "credits": 3,
+    "teacher": { "name": "何教授", "rating": 4.9 },
+    "schedule": [
+      { "day": 1, "start": 1, "end": 2 },
+      { "day": 3, "start": 1, "end": 2 }
+    ],
+    "location": { "building": "计算机楼", "floor": 4, "room": "405" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "MATH301-01",
+    "course_code": "MATH301",
+    "course_name": "概率论与数理统计",
+    "credit_transfer_group": "MATH301",
+    "credits": 4,
+    "teacher": { "name": "杨教授", "rating": 4.4 },
+    "schedule": [
+      { "day": 2, "start": 3, "end": 4 },
+      { "day": 4, "start": 3, "end": 4 },
+      { "day": 5, "start": 1, "end": 2 }
+    ],
+    "location": { "building": "致理楼", "floor": 3, "room": "308" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "ENG301-02",
+    "course_code": "ENG301",
+    "course_name": "大学英语III",
+    "credit_transfer_group": "ENG301",
+    "credits": 3,
+    "teacher": { "name": "张教授", "rating": 4.1 },
+    "schedule": [
+      { "day": 1, "start": 11, "end": 12 },
+      { "day": 3, "start": 11, "end": 12 }
+    ],
+    "location": { "building": "汇文楼", "floor": 2, "room": "210" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "MGT101-01",
+    "course_code": "MGT101",
+    "course_name": "创新创业基础",
+    "credit_transfer_group": "MGT101",
+    "credits": 2,
+    "teacher": { "name": "钱教授", "rating": 4.7 },
+    "schedule": [
+      { "day": 5, "start": 3, "end": 4 }
+    ],
+    "location": { "building": "经管楼", "floor": 2, "room": "203" },
+    "course_type": "easy",
+    "delivery_mode": "线上线下混合",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "HIS201-01",
+    "course_code": "HIS201",
+    "course_name": "世界文明史",
+    "credit_transfer_group": "HIS201",
+    "credits": 2,
+    "teacher": { "name": "秦教授", "rating": 4.5 },
+    "schedule": [
+      { "day": 2, "start": 6, "end": 7 }
+    ],
+    "location": { "building": "人文楼", "floor": 1, "room": "105" },
+    "course_type": "easy",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  }
+]

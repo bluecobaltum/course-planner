@@ -1,0 +1,78 @@
+[
+  {
+    "section_id": "CHEM201-01",
+    "course_code": "CHEM201",
+    "course_name": "有机化学",
+    "credit_transfer_group": "CHEM201",
+    "credits": 4,
+    "teacher": { "name": "赵教授", "rating": 4.2 },
+    "schedule": [
+      { "day": 2, "start": 1, "end": 2 },
+      { "day": 4, "start": 1, "end": 2 },
+      { "day": 5, "start": 3, "end": 4 }
+    ],
+    "location": { "building": "理化楼", "floor": 4, "room": "401" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "BIO201-01",
+    "course_code": "BIO201",
+    "course_name": "分子生物学",
+    "credit_transfer_group": "BIO201",
+    "credits": 3,
+    "teacher": { "name": "孙教授", "rating": 4.5 },
+    "schedule": [
+      { "day": 1, "start": 9, "end": 10 },
+      { "day": 3, "start": 9, "end": 10 }
+    ],
+    "location": { "building": "生命科学楼", "floor": 2, "room": "205" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "PE101-01",
+    "course_code": "PE101",
+    "course_name": "大学体育",
+    "credit_transfer_group": "PE101",
+    "credits": 2,
+    "teacher": { "name": "马教授", "rating": 4.1 },
+    "schedule": [
+      { "day": 3, "start": 6, "end": 7 }
+    ],
+    "location": { "building": "体育馆", "floor": 0, "room": "操场" },
+    "course_type": "easy",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "PSY101-01",
+    "course_code": "PSY101",
+    "course_name": "心理学导论",
+    "credit_transfer_group": "PSY101",
+    "credits": 2,
+    "teacher": { "name": "林教授", "rating": 4.6 },
+    "schedule": [],
+    "location": null,
+    "course_type": "easy",
+    "delivery_mode": "线上网课",
+    "semester": "2025-2026-2"
+  },
+  {
+    "section_id": "POL201-01",
+    "course_code": "POL201",
+    "course_name": "中国近现代史纲要",
+    "credit_transfer_group": "POL201",
+    "credits": 3,
+    "teacher": { "name": "郑教授", "rating": 4.0 },
+    "schedule": [
+      { "day": 5, "start": 6, "end": 8 }
+    ],
+    "location": { "building": "汇文楼", "floor": 1, "room": "101" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2"
+  }
+]

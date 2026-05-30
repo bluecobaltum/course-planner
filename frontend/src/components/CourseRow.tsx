@@ -17,8 +17,8 @@ export default function CourseRow({ course }: CourseRowProps) {
       className={cn(
         "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors",
         isMajor
-          ? "bg-indigo-50/50 border border-indigo-100/50"
-          : "bg-emerald-50/50 border border-emerald-100/50",
+          ? "bg-amber-50/50 border border-amber-100/50"
+          : "bg-lime-50/50 border border-lime-100/50",
         isOnline && "border-dashed opacity-85"
       )}
     >
@@ -26,7 +26,7 @@ export default function CourseRow({ course }: CourseRowProps) {
       <div
         className={cn(
           "h-2 w-2 rounded-full flex-shrink-0",
-          isMajor ? "bg-indigo-400" : "bg-emerald-400"
+          isMajor ? "bg-amber-400" : "bg-lime-400"
         )}
       />
 
@@ -66,7 +66,7 @@ export default function CourseRow({ course }: CourseRowProps) {
       </div>
 
       {/* Credits badge */}
-      <span className="text-xs font-medium text-text-tertiary bg-white/60 rounded-lg px-2 py-1 shrink-0 border border-border/40">
+      <span className="text-xs font-medium text-text-tertiary bg-paper/60 rounded-lg px-2 py-1 shrink-0 border border-border/40">
         {course.credits}学分
       </span>
     </div>

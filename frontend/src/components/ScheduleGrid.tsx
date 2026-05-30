@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 import type { Course } from "@/types/schedule";
 
 interface ScheduleGridProps {
@@ -24,19 +25,22 @@ interface Block {
 }
 
 const COURSE_COLORS = [
-  "bg-indigo-100 border-indigo-300 text-indigo-800",
-  "bg-violet-100 border-violet-300 text-violet-800",
-  "bg-sky-100 border-sky-300 text-sky-800",
-  "bg-blue-100 border-blue-300 text-blue-800",
-  "bg-purple-100 border-purple-300 text-purple-800",
-  "bg-rose-100 border-rose-300 text-rose-800",
-  "bg-teal-100 border-teal-300 text-teal-800",
-  "bg-amber-100 border-amber-300 text-amber-800",
-  "bg-emerald-100 border-emerald-300 text-emerald-800",
-  "bg-cyan-100 border-cyan-300 text-cyan-800",
+  "bg-amber-50 border-amber-200 text-amber-800",
+  "bg-orange-50 border-orange-200 text-orange-800",
+  "bg-yellow-50 border-yellow-200 text-yellow-800",
+  "bg-lime-50 border-lime-200 text-lime-800",
+  "bg-amber-50/70 border-amber-200/70 text-amber-700",
+  "bg-orange-50/70 border-orange-200/70 text-orange-700",
+  "bg-teal-50 border-teal-200 text-teal-800",
+  "bg-emerald-50 border-emerald-200 text-emerald-800",
+  "bg-yellow-50/70 border-yellow-200/70 text-yellow-700",
+  "bg-lime-50/70 border-lime-200/70 text-lime-700",
 ];
 
 export default function ScheduleGrid({ courses }: ScheduleGridProps) {
+  const [showEvening, setShowEvening] = useState(false);
+  const effectivePeriods = showEvening ? PERIODS : 10;
+
   const blocks = useMemo(() => {
     const result: Block[] = [];
     const colorMap = new Map<string, string>();
@@ -68,7 +72,8 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
     return result;
   }, [courses]);
 
-  const gridHeight = PERIODS * CELL_HEIGHT;
+  const gridHeight = effectivePeriods * CELL_HEIGHT;
+  const hasEvening = blocks.some((b) => b.start > 10);
 
   return (
     <div>
@@ -76,13 +81,12 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
         课表预览
       </span>
 
-      <div className="mt-2 overflow-x-auto rounded-xl border border-border/40 bg-white/50">
+      <div className="mt-2 overflow-x-auto rounded-xl border border-border/40 bg-paper/50">
         <div className="flex" style={{ minWidth: 500 }}>
           {/* Period labels column */}
           <div className="flex-shrink-0 w-10">
-            {/* Header spacer */}
             <div className="h-7" />
-            {Array.from({ length: PERIODS }, (_, i) => (
+            {Array.from({ length: effectivePeriods }, (_, i) => (
               <div
                 key={i}
                 className="flex items-center justify-center text-[10px] text-text-tertiary font-mono"
@@ -96,7 +100,6 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
           {/* Day columns */}
           {DAYS.map((day, dayIdx) => (
             <div key={day} className="flex-1 relative border-l border-border/30">
-              {/* Day header */}
               <div
                 className={cn(
                   "flex items-center justify-center text-[11px] font-medium h-7 border-b border-border/30",
@@ -106,10 +109,8 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                 {DAY_LABELS[dayIdx]}
               </div>
 
-              {/* Grid container */}
               <div className="relative" style={{ height: gridHeight }}>
-                {/* Period grid lines */}
-                {Array.from({ length: PERIODS + 1 }, (_, i) => (
+                {Array.from({ length: effectivePeriods + 1 }, (_, i) => (
                   <div
                     key={i}
                     className="absolute left-0 right-0 border-t border-border/20"
@@ -117,23 +118,20 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                   />
                 ))}
 
-                {/* Morning divider */}
                 <div
-                  className="absolute left-0 right-0 border-t-2 border-dashed border-amber-200/50"
+                  className="absolute left-0 right-0 border-t-2 border-dashed border-accent/20"
                   style={{ top: 5 * CELL_HEIGHT }}
                 />
 
-                {/* Course blocks */}
                 {blocks
-                  .filter((b) => b.day === day)
-                  .map((block, idx) => {
+                  .filter((b) => b.day === day && (showEvening || b.start <= 10))
+                  .map((block) => {
                     const top = (block.start - 1) * CELL_HEIGHT;
-                    const height =
-                      (block.end - block.start + 1) * CELL_HEIGHT;
+                    const height = (block.end - block.start + 1) * CELL_HEIGHT;
 
                     return (
                       <div
-                        key={`${block.section_id}-${idx}`}
+                        key={`${block.section_id}-${block.day}-${block.start}`}
                         className={cn(
                           "absolute left-0.5 right-0.5 rounded-md border px-1.5 py-0.5 overflow-hidden transition-transform hover:scale-[1.03] hover:z-10 hover:shadow-md cursor-default",
                           block.color,
@@ -157,6 +155,18 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
             </div>
           ))}
         </div>
+
+        {hasEvening && (
+          <button
+            onClick={() => setShowEvening(!showEvening)}
+            className="flex items-center gap-1.5 w-full justify-center py-2 text-[11px] font-medium text-text-tertiary hover:text-accent transition-colors cursor-pointer border-t border-border/20"
+          >
+            <ChevronDown
+              className={`h-3.5 w-3.5 transition-transform ${showEvening ? "rotate-180" : ""}`}
+            />
+            {showEvening ? "收起晚间课程 (11-14节)" : "展开晚间课程 (11-14节)"}
+          </button>
+        )}
       </div>
     </div>
   );

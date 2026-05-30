@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LOADING_MESSAGES = [
-  "正在分析教师评分数据...",
-  "正在寻找没有早八的可能性...",
-  "正在计算课程碎片时间...",
-  "正在匹配你的大学生活偏好...",
-  "正在权衡教师评分和早八的代价...",
+  "正在分析课程冲突...",
+  "正在计算最优课表...",
+  "正在评估教师评分...",
+  "正在权衡早八和 GPA...",
   "正在为你的大学生活做数学建模...",
+  "正在生成最佳选课策略...",
 ];
 
 interface LoadingOverlayProps {
@@ -42,8 +42,7 @@ export default function LoadingOverlay({ visible }: LoadingOverlayProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          style={{ background: "rgba(248, 250, 252, 0.85)" }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-golden-hour/85"
         >
           <div className="flex flex-col items-center gap-8 text-center">
             {/* AI pulse ring */}
@@ -63,7 +62,7 @@ export default function LoadingOverlay({ visible }: LoadingOverlayProps) {
                   delay: 0.5,
                 }}
               />
-              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg border border-accent/20">
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-paper shadow-lg border border-accent/20">
                 <span className="text-3xl">🧠</span>
               </div>
             </div>

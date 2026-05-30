@@ -12,7 +12,7 @@ export default function StrategySection({ strategies }: StrategySectionProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Brain className="h-4 w-4 text-accent" />
+        <Brain className="h-4 w-4 text-teal" />
         <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">
           AI 选课哲学 · 全部技巧
         </span>
