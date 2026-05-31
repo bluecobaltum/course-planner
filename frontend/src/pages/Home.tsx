@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, AlertCircle, RefreshCw } from "lucide-react";
 import ScenarioSelector from "@/components/ScenarioSelector";
-import EasySlider from "@/components/EasySlider";
 import GenerateButton from "@/components/GenerateButton";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import PlanCard from "@/components/PlanCard";
@@ -15,24 +14,14 @@ import type { Strategy } from "@/types/strategy";
 
 export default function Home() {
   const [scenario, setScenario] = useState("balanced");
-  const [easyCount, setEasyCount] = useState(1);
   const [loading, setLoading] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [generated, setGenerated] = useState(false);
   const [llmEvaluate, setLlmEvaluate] = useState(false);
-  const [llmModel, setLlmModel] = useState("Qwen3.5-27B");
   const [activePreset, setActivePreset] = useState<string>("");
   const [customPrompt, setCustomPrompt] = useState("");
-
-  const MODEL_OPTIONS = [
-    { label: "Qwen3.5-27B (快速)", value: "Qwen3.5-27B" },
-    { label: "DeepSeek-V4-Flash (推荐)", value: "DeepSeek-V4-Flash" },
-    { label: "DeepSeek-V4-Pro (最强)", value: "DeepSeek-V4-Pro" },
-    { label: "Qwen3.5-Plus", value: "Qwen3.5-Plus" },
-    { label: "GLM-4.7", value: "GLM-4.7" },
-  ];
 
   // Load strategies on mount
   useEffect(() => {
@@ -48,7 +37,7 @@ export default function Home() {
 
     try {
       const effectivePrompt = customPrompt.trim() || (activePreset ? PROMPT_PRESETS.find(p => p.id === activePreset)?.prompt || null : null);
-      const res = await generateSchedule(scenario, easyCount, llmEvaluate, llmModel, effectivePrompt);
+      const res = await generateSchedule(scenario, 0, llmEvaluate, "DeepSeek-V4-Flash", effectivePrompt);
       setPlans(res.plans);
       setGenerated(true);
     } catch (e) {
@@ -58,7 +47,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [scenario, easyCount, llmEvaluate, llmModel, activePreset, customPrompt]);
+  }, [scenario, llmEvaluate, activePreset, customPrompt]);
 
   return (
     <div className="min-h-screen bg-grid">
@@ -86,17 +75,18 @@ export default function Home() {
         {/* ── Inputs ── */}
         <div className="space-y-8">
           <ScenarioSelector selected={scenario} onSelect={setScenario} />
-          <EasySlider value={easyCount} onChange={setEasyCount} />
 
-          {/* ── AI 排课策略 ── */}
-          <div className="space-y-2">
+          {/* ── AI 排课策略（放大）── */}
+          <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">
-                AI 排课策略（可选）
+              <span className="text-sm font-semibold text-text-primary">
+                🤖 AI 排课策略
               </span>
-              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[10px] text-accent bg-accent/5 rounded-full px-2 py-0.5">
+                DeepSeek-V4-Flash
+              </span>
             </div>
-            <div className="flex gap-2 flex-wrap">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {SORTED_PRESETS.map((preset) => (
                 <button
                   key={preset.id}
@@ -104,14 +94,26 @@ export default function Home() {
                     setActivePreset(activePreset === preset.id ? "" : preset.id);
                     if (preset.id !== "custom") setCustomPrompt("");
                   }}
-                  className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                  className={`flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all duration-300 cursor-pointer ${
                     activePreset === preset.id
-                      ? "border-accent/60 bg-accent/10 text-accent shadow-sm"
-                      : "border-border/60 bg-paper/60 text-text-secondary hover:border-accent/30"
+                      ? "border-accent/60 bg-accent/5 glow ring-1 ring-accent/20"
+                      : "border-border/60 bg-paper/60 hover:border-accent/30 hover:bg-paper/80 hover:shadow-md"
                   }`}
                 >
-                  <span>{preset.icon}</span>
-                  <span>{preset.label}</span>
+                  <span className="text-2xl">{preset.icon}</span>
+                  <div>
+                    <span className={`text-sm font-semibold ${activePreset === preset.id ? "text-accent" : "text-text-primary"}`}>
+                      {preset.label}
+                    </span>
+                    {preset.id !== "custom" && (
+                      <p className="text-[11px] text-text-tertiary mt-0.5 leading-relaxed line-clamp-2">
+                        {preset.prompt.split("\n")[0].replace(/^请按以下原则选课：/, "")}
+                      </p>
+                    )}
+                    {preset.id === "custom" && (
+                      <p className="text-[11px] text-text-tertiary mt-0.5">自由描述你的选课偏好</p>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
@@ -119,40 +121,26 @@ export default function Home() {
               <textarea
                 value={customPrompt}
                 onChange={(e) => setCustomPrompt(e.target.value)}
-                placeholder="输入自定义选课偏好，例如：
-- 最大化空闲日，课程集中压缩到2-3天
-- 不接受早八，晚上不要超过10点
-- 物理课优先级最高"
-                rows={3}
-                className="w-full rounded-xl border border-border/60 bg-paper/70 px-3 py-2 text-xs resize-y focus:outline-none focus:border-accent/50 placeholder:text-text-tertiary"
+                placeholder="输入自定义选课偏好..."
+                rows={4}
+                className="w-full rounded-2xl border border-border/60 bg-paper/70 px-4 py-3 text-sm resize-y focus:outline-none focus:border-accent/50 placeholder:text-text-tertiary"
               />
             )}
           </div>
 
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-4 flex-wrap justify-center">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
+              <label className="flex items-center gap-2 cursor-pointer select-none bg-accent/5 hover:bg-accent/10 rounded-xl px-4 py-2 border border-accent/20 transition-colors">
                 <input
                   type="checkbox"
                   checked={llmEvaluate}
                   onChange={(e) => setLlmEvaluate(e.target.checked)}
-                  className="h-4 w-4 rounded border-border/60 accent-accent cursor-pointer"
+                  className="h-4 w-4 rounded border-accent/30 accent-accent cursor-pointer"
                 />
-                <span className="text-sm text-text-secondary">
-                  🤖 AI 智能评估/排课
+                <span className="text-sm font-medium text-accent">
+                  🤖 AI 智能排课
                 </span>
               </label>
-              <select
-                value={llmModel}
-                onChange={(e) => setLlmModel(e.target.value)}
-                className="rounded-lg border border-border/60 px-3 py-1.5 text-xs bg-paper focus:outline-none focus:border-accent/50"
-              >
-                {MODEL_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
             </div>
             <GenerateButton
               loading={loading}

@@ -1,0 +1,224 @@
+[
+  {
+    "section_id": "PHY101-01",
+    "course_code": "PHY101",
+    "course_name": "大学物理A（1）",
+    "credit_transfer_group": "PHY101",
+    "credits": 4,
+    "teacher": { "name": "顾娟", "rating": 4.0 },
+    "schedule": [
+      { "day": 2, "start": 1, "end": 2 },
+      { "day": 4, "start": 3, "end": 4 }
+    ],
+    "location": { "building": "数理楼", "floor": 3, "room": "L3-104" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "ENG101-07",
+    "course_code": "ENG101",
+    "course_name": "英语演讲：思辨与表达",
+    "credit_transfer_group": "ENG101",
+    "credits": 2,
+    "teacher": { "name": "胡春雨", "rating": 4.0 },
+    "schedule": [
+      { "day": 2, "start": 3, "end": 4 }
+    ],
+    "location": { "building": "汇文楼", "floor": 3, "room": "H3-303" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "CS101-02",
+    "course_code": "CS101",
+    "course_name": "Python程序设计基础",
+    "credit_transfer_group": "CS101",
+    "credits": 3,
+    "teacher": { "name": "陆张吉", "rating": 4.0 },
+    "schedule": [
+      { "day": 2, "start": 7, "end": 8 }
+    ],
+    "location": { "building": "数理楼", "floor": 2, "room": "L2-512（机房）" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "POL102-30",
+    "course_code": "POL102",
+    "course_name": "中国近现代史纲要",
+    "credit_transfer_group": "POL102",
+    "credits": 2,
+    "teacher": { "name": "赵豆", "rating": 4.0 },
+    "schedule": [
+      { "day": 2, "start": 9, "end": 10 }
+    ],
+    "location": { "building": "数理楼", "floor": 2, "room": "L2-111" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "PHY101L-01",
+    "course_code": "PHY101L",
+    "course_name": "大学物理实验（1）",
+    "credit_transfer_group": "PHY101L",
+    "credits": 1,
+    "teacher": { "name": "宋伟", "rating": 4.0 },
+    "schedule": [
+      { "day": 2, "start": 11, "end": 13 }
+    ],
+    "location": null,
+    "course_type": "easy",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "HUM101-01",
+    "course_code": "HUM101",
+    "course_name": "西方文化精要",
+    "credit_transfer_group": "HUM101",
+    "credits": 2,
+    "teacher": { "name": "陈恒", "rating": 4.0 },
+    "schedule": [
+      { "day": 3, "start": 1, "end": 2 }
+    ],
+    "location": { "building": "汇文楼", "floor": 3, "room": "H3-402" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "ELEC101-03",
+    "course_code": "ELEC101",
+    "course_name": "电路分析基础",
+    "credit_transfer_group": "ELEC101",
+    "credits": 4,
+    "teacher": { "name": "刘德军", "rating": 4.0 },
+    "schedule": [
+      { "day": 3, "start": 7, "end": 10 }
+    ],
+    "location": { "building": "数理楼", "floor": 3, "room": "L3-711" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "POL103-34",
+    "course_code": "POL103",
+    "course_name": "形势与政策",
+    "credit_transfer_group": "POL103",
+    "credits": 1,
+    "teacher": { "name": "周润东", "rating": 4.0 },
+    "schedule": [
+      { "day": 3, "start": 11, "end": 12 }
+    ],
+    "location": { "building": "数理楼", "floor": 1, "room": "L1-407" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "PE-01",
+    "course_code": "PE",
+    "course_name": "男子篮球俱乐部",
+    "credit_transfer_group": "PE",
+    "credits": 1,
+    "teacher": { "name": "栗云帆", "rating": 4.0 },
+    "schedule": [
+      { "day": 4, "start": 1, "end": 2 }
+    ],
+    "location": { "building": "南区体育馆", "floor": 1, "room": "篮球场" },
+    "course_type": "easy",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "pe",
+    "required": false
+  },
+  {
+    "section_id": "ME101-17",
+    "course_code": "ME101",
+    "course_name": "金工实习",
+    "credit_transfer_group": "ME101",
+    "credits": 1,
+    "teacher": { "name": "陈福民", "rating": 4.0 },
+    "schedule": [
+      { "day": 4, "start": 7, "end": 8 }
+    ],
+    "location": { "building": "致信楼", "floor": 1, "room": "S104" },
+    "course_type": "easy",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "POL101-23",
+    "course_code": "POL101",
+    "course_name": "马克思主义基本原理",
+    "credit_transfer_group": "POL101",
+    "credits": 2,
+    "teacher": { "name": "罗晶", "rating": 4.0 },
+    "schedule": [
+      { "day": 4, "start": 9, "end": 10 }
+    ],
+    "location": { "building": "数理楼", "floor": 1, "room": "L1-405" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "MATH101-02",
+    "course_code": "MATH101",
+    "course_name": "高等数学A（2）",
+    "credit_transfer_group": "MATH101",
+    "credits": 4,
+    "teacher": { "name": "陶强", "rating": 4.0 },
+    "schedule": [
+      { "day": 4, "start": 11, "end": 14 }
+    ],
+    "location": { "building": "汇文楼", "floor": 1, "room": "H1-102" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  },
+  {
+    "section_id": "ENG102-01",
+    "course_code": "ENG102",
+    "course_name": "视听说课",
+    "credit_transfer_group": "ENG102",
+    "credits": 2,
+    "teacher": null,
+    "schedule": [
+      { "day": 3, "start": 3, "end": 4 }
+    ],
+    "location": { "building": "汇文楼", "floor": 1, "room": "None" },
+    "course_type": "major",
+    "delivery_mode": "线下传统",
+    "semester": "2025-2026-2",
+    "category": "regular",
+    "required": false
+  }
+]

@@ -20,9 +20,15 @@ export default function App() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-6">
-        {activeTab === "schedule" && <Home />}
-        {activeTab === "import" && <ImportCenter />}
-        {activeTab === "courses" && <CourseManager />}
+        <div className={activeTab === "schedule" ? "" : "hidden"}>
+          <Home />
+        </div>
+        <div className={activeTab === "import" ? "" : "hidden"}>
+          <ImportCenter />
+        </div>
+        <div className={activeTab === "courses" ? "" : "hidden"}>
+          <CourseManager />
+        </div>
       </div>
     </div>
   );

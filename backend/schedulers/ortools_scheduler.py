@@ -174,6 +174,20 @@ class ORToolsScheduler(BaseScheduler):
                 model.Add(friday_free == 1)
             obj_terms.append((-or_weights["friday"], friday_free))
 
+            # Day-spread penalty: penalize each day that has ANY class
+            # This pushes solver to compress courses onto fewer days
+            day_spread_weight = or_weights.get("day_spread", 100)
+            for day in range(1, 6):
+                day_indices = [
+                    i for i in all_indices
+                    if any(s["day"] == day for s in courses[i]["schedule"])
+                ]
+                if day_indices:
+                    has_day = model.NewBoolVar(f"has_day_{day}")
+                    model.Add(sum(x[i] for i in day_indices) >= 1).OnlyEnforceIf(has_day)
+                    model.Add(sum(x[i] for i in day_indices) == 0).OnlyEnforceIf(has_day.Not())
+                    obj_terms.append((day_spread_weight, has_day))
+
             return obj_terms
 
         # ── Multi-pass solve ──
