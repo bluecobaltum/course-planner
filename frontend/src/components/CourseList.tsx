@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, Clock } from "lucide-react";
+import { Edit2, Trash2, Clock, Star } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { formatPeriods } from "@/utils/format";
@@ -10,12 +10,14 @@ interface CourseListProps {
   courses: Course[];
   onEdit: (course: Course) => void;
   onDelete: (sectionId: string) => void;
+  onToggleRequired: (sectionId: string, required: boolean) => void;
 }
 
 export default function CourseList({
   courses,
   onEdit,
   onDelete,
+  onToggleRequired,
 }: CourseListProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
@@ -73,6 +75,11 @@ export default function CourseList({
                   <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
                     {course.delivery_mode}
                   </Badge>
+                  {course.required && (
+                    <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-1.5 py-0">
+                      必选
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 mt-0.5 text-[11px] text-text-tertiary">
@@ -94,48 +101,62 @@ export default function CourseList({
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-0.5">
+                {/* Star — always visible */}
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => onEdit(course)}
+                  onClick={() => onToggleRequired(course.section_id, !course.required)}
                   className="h-8 w-8 p-0"
+                  title={course.required ? "取消必选" : "设为必选"}
                 >
-                  <Edit2 className="h-3.5 w-3.5" />
+                  <Star className={`h-3.5 w-3.5 ${course.required ? "fill-amber-400 text-amber-400" : "text-text-tertiary"}`} />
                 </Button>
 
-                {deleteConfirm === course.section_id ? (
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        onDelete(course.section_id);
-                        setDeleteConfirm(null);
-                      }}
-                      className="h-7 text-[10px] px-2 text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      确认
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeleteConfirm(null)}
-                      className="h-7 text-[10px] px-2"
-                    >
-                      取消
-                    </Button>
-                  </div>
-                ) : (
+                {/* Edit/Delete — hover only */}
+                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setDeleteConfirm(course.section_id)}
-                    className="h-8 w-8 p-0 text-red-400 hover:text-red-600"
+                    onClick={() => onEdit(course)}
+                    className="h-8 w-8 p-0"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Edit2 className="h-3.5 w-3.5" />
                   </Button>
-                )}
+
+                  {deleteConfirm === course.section_id ? (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          onDelete(course.section_id);
+                          setDeleteConfirm(null);
+                        }}
+                        className="h-7 text-[10px] px-2 text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        确认
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setDeleteConfirm(null)}
+                        className="h-7 text-[10px] px-2"
+                      >
+                        取消
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteConfirm(course.section_id)}
+                      className="h-8 w-8 p-0 text-red-400 hover:text-red-600"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </div>
               </div>
             </motion.div>
           ))}

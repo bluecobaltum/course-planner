@@ -1,4 +1,4 @@
-import { BookOpen, Sun, Clock, Coffee, Calendar } from "lucide-react";
+import { Scale, Sun, Compass, Umbrella, Moon } from "lucide-react";
 import type { ComponentType } from "react";
 
 export interface ScenarioMeta {
@@ -12,44 +12,44 @@ export interface ScenarioMeta {
 
 export const SCENARIOS: ScenarioMeta[] = [
   {
-    id: "gpa_focus",
-    icon: BookOpen,
-    title: "GPA 优先",
-    description: "不惜一切代价追求高绩点，即使面临早八和长课日也值得",
-    tags: ["高分教师", "学术导向", "品质优先"],
-    weightPreview: "GPA × 70% · 紧凑度 × 10% · 压力 × 5%",
+    id: "balanced",
+    icon: Scale,
+    title: "平衡模式",
+    description: "空闲时间、紧凑度、无早八均衡优化，适合大多数人的默认选择",
+    tags: ["均衡", "推荐", "全能"],
+    weightPreview: "空闲日 × 25% · 紧凑度 × 25% · 无早八 × 20%",
   },
   {
     id: "no_morning",
     icon: Sun,
-    title: "拒绝早八",
-    description: "绝不选第一节早课，上午课程也要尽量减少",
+    title: "无早八模式",
+    description: "最大化减少1-2节早课，让你每天自然醒",
     tags: ["无早八", "自然醒", "睡眠优先"],
-    weightPreview: "早八友好 × 15% · 周五友好 × 15% · GPA × 15%",
+    weightPreview: "无早八 × 60% · 紧凑度 × 15% · 空闲日 × 10%",
   },
   {
-    id: "long_weekend",
-    icon: Calendar,
-    title: "快乐长周末",
-    description: "周五没课或最少课，享受三天周末的自由时光",
-    tags: ["周五自由", "三天周末", "旅行友好"],
-    weightPreview: "周五友好 × 30% · 周一友好 × 30% · 紧凑度 × 15%",
-  },
-  {
-    id: "balanced",
-    icon: Clock,
-    title: "紧凑课表",
-    description: "课程集中紧凑，最大化完整自由时间块",
+    id: "compact",
+    icon: Compass,
+    title: "紧凑模式",
+    description: "课程连续集中，减少课间空档，最大化连续自由时间块",
     tags: ["集中排课", "大块空闲", "高效节奏"],
-    weightPreview: "紧凑度 × 25% · 空闲半日 × 25% · GPA × 20%",
+    weightPreview: "紧凑度 × 65% · 无早八 × 15% · 无晚课 × 10%",
   },
   {
-    id: "easy_mode",
-    icon: Coffee,
-    title: "摆烂模式",
-    description: "学分越少越好，压力越低越好，轻松度过每一学期",
-    tags: ["低学分", "低压", "轻松毕业"],
-    weightPreview: "压力 × 45% · 空闲半日 × 20% · GPA × 10%",
+    id: "leisurely",
+    icon: Umbrella,
+    title: "休闲模式",
+    description: "尽量压缩上课天数，最大化完整空闲日，适合实习/社团",
+    tags: ["空闲优先", "压缩天数", "自由时间"],
+    weightPreview: "空闲日 × 60% · 无早八 × 15% · 紧凑度 × 10%",
+  },
+  {
+    id: "no_night",
+    icon: Moon,
+    title: "无晚课模式",
+    description: "减少11-14节晚课，晚上时间完全属于自己",
+    tags: ["无晚课", "晚间自由", "早睡友好"],
+    weightPreview: "无晚课 × 60% · 紧凑度 × 15% · 空闲日 × 10%",
   },
 ];
 

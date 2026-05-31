@@ -9,17 +9,30 @@ import PlanCard from "@/components/PlanCard";
 import StrategySection from "@/components/StrategySection";
 import { generateSchedule, getStrategies } from "@/api/schedule";
 import { filterStrategies } from "@/utils/strategy";
+import { PROMPT_PRESETS, SORTED_PRESETS } from "@/constants/prompts";
 import type { Plan } from "@/types/schedule";
 import type { Strategy } from "@/types/strategy";
 
 export default function Home() {
-  const [scenario, setScenario] = useState("gpa_focus");
+  const [scenario, setScenario] = useState("balanced");
   const [easyCount, setEasyCount] = useState(1);
   const [loading, setLoading] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [generated, setGenerated] = useState(false);
+  const [llmEvaluate, setLlmEvaluate] = useState(false);
+  const [llmModel, setLlmModel] = useState("Qwen3.5-27B");
+  const [activePreset, setActivePreset] = useState<string>("");
+  const [customPrompt, setCustomPrompt] = useState("");
+
+  const MODEL_OPTIONS = [
+    { label: "Qwen3.5-27B (快速)", value: "Qwen3.5-27B" },
+    { label: "DeepSeek-V4-Flash (推荐)", value: "DeepSeek-V4-Flash" },
+    { label: "DeepSeek-V4-Pro (最强)", value: "DeepSeek-V4-Pro" },
+    { label: "Qwen3.5-Plus", value: "Qwen3.5-Plus" },
+    { label: "GLM-4.7", value: "GLM-4.7" },
+  ];
 
   // Load strategies on mount
   useEffect(() => {
@@ -34,7 +47,8 @@ export default function Home() {
     setGenerated(false);
 
     try {
-      const res = await generateSchedule(scenario, easyCount);
+      const effectivePrompt = customPrompt.trim() || (activePreset ? PROMPT_PRESETS.find(p => p.id === activePreset)?.prompt || null : null);
+      const res = await generateSchedule(scenario, easyCount, llmEvaluate, llmModel, effectivePrompt);
       setPlans(res.plans);
       setGenerated(true);
     } catch (e) {
@@ -44,7 +58,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [scenario, easyCount]);
+  }, [scenario, easyCount, llmEvaluate, llmModel, activePreset, customPrompt]);
 
   return (
     <div className="min-h-screen bg-grid">
@@ -73,11 +87,79 @@ export default function Home() {
         <div className="space-y-8">
           <ScenarioSelector selected={scenario} onSelect={setScenario} />
           <EasySlider value={easyCount} onChange={setEasyCount} />
-          <GenerateButton
-            loading={loading}
-            disabled={!scenario}
-            onClick={handleGenerate}
-          />
+
+          {/* ── AI 排课策略 ── */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">
+                AI 排课策略（可选）
+              </span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {SORTED_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  onClick={() => {
+                    setActivePreset(activePreset === preset.id ? "" : preset.id);
+                    if (preset.id !== "custom") setCustomPrompt("");
+                  }}
+                  className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                    activePreset === preset.id
+                      ? "border-accent/60 bg-accent/10 text-accent shadow-sm"
+                      : "border-border/60 bg-paper/60 text-text-secondary hover:border-accent/30"
+                  }`}
+                >
+                  <span>{preset.icon}</span>
+                  <span>{preset.label}</span>
+                </button>
+              ))}
+            </div>
+            {activePreset === "custom" && (
+              <textarea
+                value={customPrompt}
+                onChange={(e) => setCustomPrompt(e.target.value)}
+                placeholder="输入自定义选课偏好，例如：
+- 最大化空闲日，课程集中压缩到2-3天
+- 不接受早八，晚上不要超过10点
+- 物理课优先级最高"
+                rows={3}
+                className="w-full rounded-xl border border-border/60 bg-paper/70 px-3 py-2 text-xs resize-y focus:outline-none focus:border-accent/50 placeholder:text-text-tertiary"
+              />
+            )}
+          </div>
+
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap justify-center">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={llmEvaluate}
+                  onChange={(e) => setLlmEvaluate(e.target.checked)}
+                  className="h-4 w-4 rounded border-border/60 accent-accent cursor-pointer"
+                />
+                <span className="text-sm text-text-secondary">
+                  🤖 AI 智能评估/排课
+                </span>
+              </label>
+              <select
+                value={llmModel}
+                onChange={(e) => setLlmModel(e.target.value)}
+                className="rounded-lg border border-border/60 px-3 py-1.5 text-xs bg-paper focus:outline-none focus:border-accent/50"
+              >
+                {MODEL_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <GenerateButton
+              loading={loading}
+              disabled={!scenario}
+              onClick={handleGenerate}
+            />
+          </div>
         </div>
 
         {/* ── Error ── */}

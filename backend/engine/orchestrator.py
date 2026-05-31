@@ -93,6 +93,17 @@ def generate_plans(
     if not plans:
         return []
 
+    # ── Filter: keep only plans that contain all required courses ──
+    required_ids = [c["section_id"] for c in courses if c.get("required") is True]
+    if required_ids:
+        plans = [
+            p for p in plans
+            if all(rid in {c["section_id"] for c in p} for rid in required_ids)
+        ]
+
+    if not plans:
+        return []
+
     # ── Step 4: Score all plans ──
     scored: list[tuple[list[dict[str, Any]], float, dict[str, Any]]] = []
     for plan in plans:
@@ -146,30 +157,17 @@ def generate_plans(
 def _group_by_course_type(
     courses: list[dict[str, Any]],
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, list[dict[str, Any]]]]:
-    """Split courses into major and easy groups by credit_transfer_group.
+    """Place ALL courses into major_groups — major/easy distinction disabled.
 
-    Args:
-        courses: All course dicts from courses.json.
-
-    Returns:
-        Tuple of (major_groups, easy_groups).
-        Each group is {credit_transfer_group_id: [course_dict, ...]}.
+    Returns (all_groups, empty_dict).
     """
-    major_groups: dict[str, list[dict[str, Any]]] = {}
-    easy_groups: dict[str, list[dict[str, Any]]] = {}
-
+    all_groups: dict[str, list[dict[str, Any]]] = {}
     for course in courses:
         group_id = course["credit_transfer_group"]
-        if course["course_type"] == "major":
-            if group_id not in major_groups:
-                major_groups[group_id] = []
-            major_groups[group_id].append(course)
-        else:
-            if group_id not in easy_groups:
-                easy_groups[group_id] = []
-            easy_groups[group_id].append(course)
-
-    return major_groups, easy_groups
+        if group_id not in all_groups:
+            all_groups[group_id] = []
+        all_groups[group_id].append(course)
+    return all_groups, {}
 
 
 # ── Major Combination Generation ─────────────────────────────
@@ -180,23 +178,26 @@ def _generate_major_combos(
 ) -> list[list[dict[str, Any]]]:
     """Generate all conflict-free major course combinations.
 
-    Takes the cartesian product of all major groups (one section per group)
-    and prunes any combination with time conflicts.
-
-    Args:
-        major_groups: {group_id: [course_dict, ...]}.
+    Each major group contributes at most 1 section (can be skipped).
+    The null-combo (all skipped) is excluded.
 
     Returns:
-        List of valid major-only course lists (each is a full major curriculum).
-        May be empty if all combinations conflict.
+        List of valid major-only course lists.
     """
-    group_lists = list(major_groups.values())
+    # Add None as "skip this group" option for each group
+    group_options = [
+        lst + [None] for lst in major_groups.values()
+    ]
+
     valid_combos: list[list[dict[str, Any]]] = []
 
-    for combo in product(*group_lists):
-        # combo is a tuple of course dicts, one per group
-        if not _has_time_conflict(list(combo)):
-            valid_combos.append(list(combo))
+    for combo in product(*group_options):
+        # Filter out None (skipped groups), skip all-None combo
+        selected = [c for c in combo if c is not None]
+        if not selected:
+            continue
+        if not _has_time_conflict(selected):
+            valid_combos.append(selected)
 
     return valid_combos
 

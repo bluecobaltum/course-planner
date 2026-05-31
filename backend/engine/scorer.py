@@ -15,20 +15,16 @@ from collections import defaultdict
 from typing import Any
 
 from config.scenarios import (
-    SCENARIO_WEIGHTS,
-    MIN_CREDITS,
-    MAX_CREDITS,
     STRESS_COMFORT_CREDITS,
     STRESS_MODERATE_CREDITS,
     COMPACT_FRAGMENT_DECAY,
-    MORNING_PERIOD_START,
-    MORNING_PERIOD_END,
     AFTERNOON_PERIOD_START,
-    AFTERNOON_PERIOD_END,
     PENALTY_NO_CLASS,
     PENALTY_HAS_CLASS,
     PENALTY_PER_DAY_DECAY,
     EARLY_MORNING_CUTOFF,
+    NIGHT_PERIOD_START,
+    LEGACY_DIMENSIONS,
 )
 
 # ── Shared Helper ────────────────────────────────────────────
@@ -175,48 +171,6 @@ def compute_stress_score(plan: list[dict[str, Any]]) -> float:
         )
 
 
-def compute_free_score(plan: list[dict[str, Any]]) -> float:
-    """Count completely free half-days across the week.
-
-    A half-day is "free" if NO occupied periods fall in its range.
-    Morning = periods 1-5, Afternoon+Evening = periods 6-14.
-    An entirely empty day contributes 2 free half-days.
-
-    Uses _get_occupied_periods to correctly handle cross-session courses
-    (e.g., a course at periods 3-6 blocks BOTH morning and afternoon).
-
-    Args:
-        plan: List of course dicts.
-
-    Returns:
-        Free half-day count, naturally 0-10 (5 days × 2 half-days).
-    """
-    occupied = _get_occupied_periods(plan)
-    free_count = 0
-
-    for day in range(1, 6):  # Mon-Fri
-        periods = occupied.get(day, set())
-
-        if not periods:
-            # Entirely free day
-            free_count += 2
-            continue
-
-        # Morning (periods 1-5) free?
-        morning_occupied = any(
-            MORNING_PERIOD_START <= p <= MORNING_PERIOD_END for p in periods
-        )
-        if not morning_occupied:
-            free_count += 1
-
-        # Afternoon (periods 6-14) free?
-        afternoon_occupied = any(
-            AFTERNOON_PERIOD_START <= p <= AFTERNOON_PERIOD_END for p in periods
-        )
-        if not afternoon_occupied:
-            free_count += 1
-
-    return float(min(10, free_count))
 
 
 # ── Penalty Scoring ──────────────────────────────────────────
@@ -311,6 +265,103 @@ def compute_afternoon_penalty(plan: list[dict[str, Any]]) -> float:
     return round(max(1.0, PENALTY_NO_CLASS - count * PENALTY_PER_DAY_DECAY), 1)
 
 
+# ── New: Night Penalty ───────────────────────────────────────
+
+
+def compute_night_penalty(plan: list[dict[str, Any]]) -> float:
+    """Penalty for night classes (periods 11-14).
+
+    Counts DAYS with any class at period >= 11.
+    Score: max(1.0, 10.0 - night_days × 1.0)
+    """
+    night_days: set[int] = set()
+    for course in plan:
+        for slot in course["schedule"]:
+            if slot["start"] >= NIGHT_PERIOD_START:
+                night_days.add(slot["day"])
+
+    count = len(night_days)
+    if count == 0:
+        return PENALTY_NO_CLASS
+    return round(max(1.0, PENALTY_NO_CLASS - count * PENALTY_PER_DAY_DECAY), 1)
+
+
+# ── New: Free Days (whole days, not half-days) ───────────────
+
+
+def compute_free_days(plan: list[dict[str, Any]]) -> float:
+    """Count completely free days (Mon-Fri). Scale to [1.0, 10.0].
+
+    0 free days → 1.0, 5 free days → 10.0.
+    """
+    occupied_days: set[int] = set()
+    for course in plan:
+        for slot in course["schedule"]:
+            occupied_days.add(slot["day"])
+
+    free = 5 - len(occupied_days)
+    if free <= 0:
+        return 1.0
+    return round(1.0 + free * 1.8, 1)  # 1→2.8, 2→4.6, 3→6.4, 4→8.2, 5→10.0
+
+
+# ── New: Distribution Score ───────────────────────────────────
+
+
+def compute_distribution_score(plan: list[dict[str, Any]]) -> float:
+    """Penalize extreme imbalance in daily class count.
+
+    Collects period count per day. High variance → low score.
+    Perfectly even spread → 10.0. All classes on one day → 1.0.
+    """
+    day_counts: dict[int, int] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for course in plan:
+        for slot in course["schedule"]:
+            day_counts[slot["day"]] += 1
+
+    counts = list(day_counts.values())
+    if max(counts) == 0:
+        return 10.0  # no classes at all = perfect balance
+
+    # Coefficient of variation penalizes skew
+    avg = sum(counts) / 5
+    if avg == 0:
+        return 10.0
+
+    variance = sum((c - avg) ** 2 for c in counts) / 5
+    cv = (variance ** 0.5) / avg  # normalized std dev
+
+    # Map CV to score: CV=0 → 10.0, CV=2.0 → 1.0
+    score = max(1.0, 10.0 - cv * 4.5)
+    return round(score, 1)
+
+
+# ── Legacy Stubs (reserved, DO NOT shadow real functions) ────
+# NOTE: these are intentionally named _legacy_* so they don't
+# override the real implementations above (lines 87-313).
+# Change names back when GPA/stress modules are rebuilt.
+
+
+def _legacy_gpa_score(plan: list[dict[str, Any]]) -> float:
+    return 5.0
+
+
+def _legacy_stress_score(plan: list[dict[str, Any]]) -> float:
+    return 5.0
+
+
+def _legacy_friday_penalty(plan: list[dict[str, Any]]) -> float:
+    return 5.0
+
+
+def _legacy_monday_penalty(plan: list[dict[str, Any]]) -> float:
+    return 5.0
+
+
+def _legacy_afternoon_penalty(plan: list[dict[str, Any]]) -> float:
+    return 5.0
+
+
 # ── Master Scoring ───────────────────────────────────────────
 
 
@@ -320,34 +371,32 @@ def calculate_score(
 ) -> tuple[float, dict[str, float]]:
     """Calculate the weighted total score for a plan.
 
-    Computes all 8 sub-scores, then applies scenario-specific weights.
-    Uses direct key access (weights["key"]) — missing keys raise KeyError
-    to catch config errors at development time.
-
-    Args:
-        plan: List of course dicts representing one complete schedule.
-        weights: Scenario weight dict with exactly 8 keys.
+    Computes 5 schedule-focused sub-scores + 5 legacy stubs (always 5.0).
+    Legacy dims are included in the breakdown for API compatibility but
+    carry zero weight in current scenarios.
 
     Returns:
         Tuple of (weighted_total, breakdown_dict).
-        total is rounded to 1 decimal, breakdown values to 1 decimal.
     """
-    # Compute all 8 sub-scores
+    # Core schedule dimensions
     scores: dict[str, float] = {
-        "gpa_score": compute_gpa_score(plan),
-        "compact_score": compute_compact_score(plan),
-        "stress_score": compute_stress_score(plan),
-        "free_score": compute_free_score(plan),
-        "morning_penalty": compute_morning_penalty(plan),
-        "friday_penalty": compute_friday_penalty(plan),
-        "monday_penalty": compute_monday_penalty(plan),
-        "afternoon_penalty": compute_afternoon_penalty(plan),
+        "free_days": compute_free_days(plan),
+        "compactness": compute_compact_score(plan),
+        "no_morning": compute_morning_penalty(plan),
+        "no_night": compute_night_penalty(plan),
+        "distribution": compute_distribution_score(plan),
     }
 
-    # Weighted sum — direct key access, no .get() fallback
-    total = sum(scores[key] * weights[key] for key in scores)
+    # Legacy stubs — always 5.0, included for API compat
+    for dim in LEGACY_DIMENSIONS:
+        scores[dim] = 5.0
 
-    # Round for clean display
+    # Weighted sum over current dimensions only
+    total = 0.0
+    for key, val in scores.items():
+        w = weights.get(key, 0.0)
+        total += val * w
+
     breakdown = {k: round(v, 1) for k, v in scores.items()}
     return round(total, 1), breakdown
 
@@ -391,68 +440,56 @@ def generate_reasons(
 ) -> list[str]:
     """Generate natural-language recommendation reasons for a plan.
 
-    Rules are checked in order. Each rule contributes at most one reason.
-    Produces 2-5 bullet points suitable for frontend display.
-
-    Args:
-        plan: List of course dicts.
-        breakdown: Score breakdown dict from calculate_score.
-        scenario: Scenario ID (for context-aware reason generation).
-
-    Returns:
-        List of Chinese natural-language reason strings.
+    Focused on schedule metrics only — no GPA/teacher references.
     """
     reasons: list[str] = []
 
-    # ── Penalty-based highlights ──
-    if breakdown["morning_penalty"] >= PENALTY_NO_CLASS:
+    # Free days highlight
+    free_val = breakdown.get("free_days", 1.0)
+    occupied = len(set(s["day"] for c in plan for s in c["schedule"]))
+    free_days = 5 - occupied
+    if free_days >= 3:
+        reasons.append(f"每周 {free_days} 天完全自由")
+    elif free_days >= 1:
+        reasons.append(f"有 {free_days} 个完整空闲日")
+
+    # Morning penalty highlight
+    if breakdown.get("no_morning", 0) >= PENALTY_NO_CLASS:
         reasons.append("无早八课（无1-2节课）")
-    if breakdown["friday_penalty"] >= PENALTY_NO_CLASS:
-        reasons.append("周五全空，享受长周末")
-    if breakdown["monday_penalty"] >= PENALTY_NO_CLASS:
-        reasons.append("周一全空，三天小长假")
-    if breakdown["afternoon_penalty"] >= PENALTY_NO_CLASS:
-        reasons.append("下午/晚间完全自由")
+    elif breakdown.get("no_morning", 0) >= 7.0:
+        reasons.append("早课很少，睡眠友好")
 
-    # ── Teacher quality ──
-    ratings = [_safe_rating(c) for c in plan if _safe_rating(c) is not None]
-    avg_rating = sum(ratings) / len(ratings) if ratings else 0
-    if avg_rating >= 4.5:
-        reasons.append(f"教师平均评分 {avg_rating:.1f}，整体质量优秀")
-    elif avg_rating >= 4.0:
-        reasons.append(f"教师平均评分 {avg_rating:.1f}，质量良好")
+    # Night penalty highlight
+    if breakdown.get("no_night", 0) >= PENALTY_NO_CLASS:
+        reasons.append("完全无晚课（无11-14节课）")
+    elif breakdown.get("no_night", 0) >= 7.0:
+        reasons.append("晚间课程极少")
 
-    # ── Credit load ──
-    total_credits = sum(_safe_credits(c) for c in plan)
-    if total_credits <= 18:
-        reasons.append(f"仅 {total_credits} 学分，学业压力很小")
-    elif total_credits >= 24:
-        reasons.append(f"共 {total_credits} 学分，学分较满但收益高")
-
-    # ── Delivery mode highlights ──
-    online_courses = [
-        c
-        for c in plan
-        if c.get("delivery_mode") in ("线上网课", "线上线下混合")
-    ]
-    for c in online_courses[:2]:  # at most 2
-        reasons.append(f"《{c['course_name']}》选{c['delivery_mode']}模式，节省通勤时间")
-
-    # ── Compactness ──
-    if breakdown["compact_score"] >= 8.0:
+    # Compactness
+    compact = breakdown.get("compactness", 5.0)
+    if compact >= 8.0:
         reasons.append("课程集中度高，无碎片时间")
-    elif breakdown["compact_score"] < 5.0:
+    elif compact < 5.0:
         reasons.append("课程较分散，但整体安排仍合理")
 
-    # ── Scenario-specific highlights ──
-    if scenario == "gpa_focus" and avg_rating >= 4.5:
-        reasons.append("GPA友好度高，教师评分优秀")
-    elif scenario == "easy_mode" and total_credits <= 20:
-        reasons.append("轻松模式：学分适中，压力可控")
-    elif scenario == "morning_only" and breakdown["afternoon_penalty"] >= 8.0:
-        reasons.append("上午集中度高，下午时间完全自主")
+    # Distribution
+    dist = breakdown.get("distribution", 5.0)
+    if dist >= 8.0:
+        reasons.append("每日课程分布均匀，节奏舒适")
 
-    # ── Fallback ──
+    # Credit load (informational)
+    total_credits = sum(_safe_credits(c) for c in plan)
+    if total_credits <= 18:
+        reasons.append(f"仅 {total_credits} 学分，压力很小")
+    elif total_credits >= 24:
+        reasons.append(f"共 {total_credits} 学分，学分较满")
+
+    # Online course highlight
+    online = [c for c in plan if c.get("delivery_mode") in ("线上网课", "线上线下混合")]
+    for c in online[:1]:
+        reasons.append(f"《{c['course_name']}》选{c['delivery_mode']}模式，节省通勤")
+
+    # Fallback
     if not reasons:
         reasons.append("方案综合得分最优，各项指标均衡")
 

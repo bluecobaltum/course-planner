@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lightbulb, Trophy, Clock, GraduationCap, MapPin, ChevronDown } from "lucide-react";
+import { Lightbulb, Trophy, Clock, GraduationCap, MapPin, ChevronDown, Brain } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import CourseRow from "./CourseRow";
@@ -19,14 +19,11 @@ interface PlanCardProps {
 }
 
 const SCORE_LABELS: Record<string, string> = {
-  gpa_score: "GPA 友好",
-  compact_score: "紧凑度",
-  stress_score: "学业压力",
-  free_score: "空闲半日",
-  morning_penalty: "早八友好",
-  friday_penalty: "周五友好",
-  monday_penalty: "周一友好",
-  afternoon_penalty: "下午自由",
+  free_days: "空闲天数",
+  compactness: "紧凑度",
+  no_morning: "无早八",
+  no_night: "无晚课",
+  distribution: "分布均衡",
 };
 
 const QUICK_STATS = [
@@ -228,6 +225,67 @@ export default function PlanCard({
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* ── AI LLM Review ── */}
+          {plan.llm_review && (
+            <div className="rounded-xl border border-amber-200/60 bg-amber-50/30 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Brain className="h-4 w-4 text-amber-500" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-700">
+                  AI 课程评估 · 综合评分 {plan.llm_review.score}/10
+                </span>
+              </div>
+              <p className="text-sm text-text-primary font-medium">
+                {plan.llm_review.overall}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-semibold text-emerald-600 uppercase">
+                    优点
+                  </span>
+                  <ul className="space-y-0.5">
+                    {plan.llm_review.pros.map((p, i) => (
+                      <li key={i} className="text-xs text-text-secondary flex items-start gap-1">
+                        <span className="text-emerald-400 mt-0.5">+</span>
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-semibold text-red-500 uppercase">
+                    不足
+                  </span>
+                  <ul className="space-y-0.5">
+                    {plan.llm_review.cons.map((c, i) => (
+                      <li key={i} className="text-xs text-text-secondary flex items-start gap-1">
+                        <span className="text-red-400 mt-0.5">-</span>
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              {plan.llm_review.suggestions.length > 0 && (
+                <div className="pt-1 border-t border-amber-200/40">
+                  <span className="text-[10px] font-semibold text-amber-600 uppercase">
+                    改进建议
+                  </span>
+                  <ul className="mt-1 space-y-0.5">
+                    {plan.llm_review.suggestions.map((s, i) => (
+                      <li key={i} className="text-xs text-text-secondary flex items-start gap-1">
+                        <span className="text-amber-400 mt-0.5">*</span>
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="text-[10px] text-text-tertiary pt-1 border-t border-amber-200/40">
+                适合: {plan.llm_review.best_for}
+              </div>
             </div>
           )}
 

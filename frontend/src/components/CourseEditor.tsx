@@ -50,6 +50,7 @@ export default function CourseEditor({
   const [floor, setFloor] = useState(1);
   const [room, setRoom] = useState("");
   const [courseType, setCourseType] = useState<"major" | "easy">("major");
+  const [isRequired, setIsRequired] = useState(false);
   const [deliveryMode, setDeliveryMode] = useState<
     "线下传统" | "线上网课" | "线上线下混合"
   >("线下传统");
@@ -71,6 +72,7 @@ export default function CourseEditor({
       setRoom(course.location?.room ?? "");
       setCourseType(course.course_type);
       setDeliveryMode(course.delivery_mode);
+      setIsRequired(course.required ?? false);
     }
   }, [course]);
 
@@ -96,6 +98,7 @@ export default function CourseEditor({
           ? { building: building.trim() || "-", floor, room: room.trim() || "-" }
           : null,
       course_type: courseType,
+      required: isRequired,
       delivery_mode: deliveryMode,
       semester: "2025-2026-2",
     };
@@ -180,21 +183,34 @@ export default function CourseEditor({
             className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
           />
         </label>
-        <label className="space-y-1">
-          <span className="text-[10px] text-text-tertiary">课程类型</span>
-          <select
-            value={courseType}
-            onChange={(e) =>
-              setCourseType(e.target.value as "major" | "easy")
-            }
-            className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
-          >
-            {TYPE_OPTIONS.map((o) => (
-              <option key={o.v} value={o.v}>
-                {o.l}
-              </option>
-            ))}
-          </select>
+        <label className="space-y-1 flex items-end gap-2">
+          <div className="flex-1">
+            <span className="text-[10px] text-text-tertiary">课程类型</span>
+            <select
+              value={courseType}
+              onChange={(e) =>
+                setCourseType(e.target.value as "major" | "easy")
+              }
+              className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm bg-paper focus:outline-none focus:border-accent/50"
+            >
+              {TYPE_OPTIONS.map((o) => (
+                <option key={o.v} value={o.v}>
+                  {o.l}
+                </option>
+              ))}
+            </select>
+          </div>
+          <label className="flex items-center gap-1.5 pb-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={isRequired}
+              onChange={(e) => setIsRequired(e.target.checked)}
+              className="h-3.5 w-3.5 rounded border-border/60 accent-accent cursor-pointer"
+            />
+            <span className="text-[10px] text-text-tertiary">
+              必选课程
+            </span>
+          </label>
         </label>
         <label className="space-y-1">
           <span className="text-[10px] text-text-tertiary">授课模式</span>

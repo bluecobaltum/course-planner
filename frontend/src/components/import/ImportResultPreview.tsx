@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -7,6 +7,7 @@ import {
   AlertCircle,
   RotateCcw,
   Zap,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import CourseRow from "@/components/CourseRow";
@@ -39,6 +40,16 @@ export default function ImportResultPreview({
   const [importing, setImporting] = useState(false);
   const [imported, setImported] = useState(0);
   const [errors, setErrors] = useState<string[]>([]);
+  const [removedIndices, setRemovedIndices] = useState<Set<number>>(new Set());
+
+  const visibleCourses = useMemo(
+    () => result.courses.filter((_, i) => !removedIndices.has(i)),
+    [result.courses, removedIndices]
+  );
+
+  const handleRemoveCourse = (idx: number) => {
+    setRemovedIndices((prev) => new Set([...prev, idx]));
+  };
 
   const handleConfirmImport = async () => {
     setImporting(true);
@@ -46,7 +57,7 @@ export default function ImportResultPreview({
     let count = 0;
     const errs: string[] = [];
 
-    for (const course of result.courses) {
+    for (const course of visibleCourses) {
       try {
         await createCourse(course);
         count++;
@@ -93,7 +104,12 @@ export default function ImportResultPreview({
           <div>
             <div className="text-xs text-text-tertiary">识别课程数</div>
             <div className="text-sm font-semibold text-text-primary">
-              {result.stats.course_count} 门
+              {visibleCourses.length} 门
+              {removedIndices.size > 0 && (
+                <span className="text-xs font-normal text-text-tertiary ml-1">
+                  (已移除 {removedIndices.size} 门)
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -113,13 +129,37 @@ export default function ImportResultPreview({
 
       {/* ── Course List ── */}
       <div>
-        <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">
-          解析结果
-        </span>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">
+            解析结果
+          </span>
+          {removedIndices.size > 0 && (
+            <button
+              onClick={() => setRemovedIndices(new Set())}
+              className="text-[11px] text-accent hover:text-accent-dark transition-colors cursor-pointer"
+            >
+              恢复全部
+            </button>
+          )}
+        </div>
         <div className="mt-2 space-y-1.5">
-          {result.courses.map((course, i) => (
-            <CourseRow key={`${course.section_id}-${i}`} course={course} />
-          ))}
+          {visibleCourses.map((course, i) => {
+            const origIdx = result.courses.indexOf(course);
+            return (
+              <div key={`${course.section_id}-${origIdx}`} className="flex items-center gap-1.5 group">
+                <div className="flex-1">
+                  <CourseRow course={course} />
+                </div>
+                <button
+                  onClick={() => handleRemoveCourse(origIdx)}
+                  className="flex-shrink-0 h-7 w-7 flex items-center justify-center rounded-lg text-text-tertiary hover:text-danger hover:bg-red-50 transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                  title="移除此课程"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -173,7 +213,7 @@ export default function ImportResultPreview({
       {/* ── Import Status ── */}
       {importing && (
         <div className="text-center text-sm text-text-secondary py-2">
-          正在导入课程... {imported}/{result.courses.length}
+          正在导入课程... {imported}/{visibleCourses.length}
         </div>
       )}
 
@@ -188,7 +228,7 @@ export default function ImportResultPreview({
         <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 space-y-1">
           <div className="flex items-center gap-2 text-sm text-red-700">
             <AlertCircle className="h-4 w-4" />
-            部分课程导入失败，成功 {imported}/{result.courses.length}
+            部分课程导入失败，成功 {imported}/{visibleCourses.length}
           </div>
           {errors.map((e, i) => (
             <div key={i} className="text-xs text-red-600 ml-6">

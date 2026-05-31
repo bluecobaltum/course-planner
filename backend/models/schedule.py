@@ -4,35 +4,35 @@ These models define the shape of a generated schedule plan —
 the scored, analyzed output that the frontend receives.
 """
 
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 from models.course import Course
 
 
 class ScoreBreakdown(BaseModel):
-    """The 8 sub-scores that make up a plan's weighted total.
+    """Schedule-focused scoring dimensions + legacy stubs.
 
-    All scores are in range [1.0, 10.0]. Higher is always better.
-    Penalty dimensions produce high scores when the penalty is NOT triggered
-    (e.g., no morning classes → morning_penalty = 10.0).
+    All scores in [1.0, 10.0]. Higher is always better.
     """
 
-    gpa_score: float = Field(..., description="Teacher rating avg × 2 (2.0-10.0)")
-    compact_score: float = Field(..., description="Schedule compactness (1.0-10.0)")
-    stress_score: float = Field(..., description="Credit load stress (1.0-10.0)")
-    free_score: float = Field(..., description="Free half-day count (0-10)")
-    morning_penalty: float = Field(
-        ..., description="Morning class penalty (10.0 = no mornings, 1.0 = many)"
-    )
-    friday_penalty: float = Field(
-        ..., description="Friday class penalty (10.0 = free Friday, 3.0 = has class)"
-    )
-    monday_penalty: float = Field(
-        ..., description="Monday class penalty (10.0 = free Monday, 3.0 = has class)"
-    )
-    afternoon_penalty: float = Field(
-        ..., description="Afternoon class penalty (10.0 = no afternoon, 1.0 = many)"
-    )
+    # Current schedule-optimizer dimensions
+    free_days: float = Field(default=5.0, description="Free whole days score (1.0-10.0)")
+    compactness: float = Field(default=5.0, description="Schedule compactness (1.0-10.0)")
+    no_morning: float = Field(default=5.0, description="No-early-morning score (10.0 = perfect)")
+    no_night: float = Field(default=5.0, description="No-night-class score (10.0 = perfect)")
+    distribution: float = Field(default=5.0, description="Daily balance score (10.0 = even spread)")
+
+    # Legacy stubs (reserved, always 5.0)
+    gpa_score: float = Field(default=5.0, description="[Legacy] GPA score stub")
+    compact_score: float = Field(default=5.0, description="[Legacy] Compactness stub")
+    stress_score: float = Field(default=5.0, description="[Legacy] Stress score stub")
+    free_score: float = Field(default=5.0, description="[Legacy] Free half-day score stub")
+    morning_penalty: float = Field(default=5.0, description="[Legacy] Morning penalty stub")
+    friday_penalty: float = Field(default=5.0, description="[Legacy] Friday penalty stub")
+    monday_penalty: float = Field(default=5.0, description="[Legacy] Monday penalty stub")
+    afternoon_penalty: float = Field(default=5.0, description="[Legacy] Afternoon penalty stub")
 
 
 class PlanAnalysis(BaseModel):
@@ -63,4 +63,8 @@ class Plan(BaseModel):
     matched_strategies: list[str] = Field(
         default_factory=list,
         description="Strategy IDs that apply to this plan",
+    )
+    llm_review: Optional[dict] = Field(
+        default=None,
+        description="LLM evaluation (only when llm_evaluate=True)"
     )

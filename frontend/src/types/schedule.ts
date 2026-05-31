@@ -29,20 +29,29 @@ export interface Course {
   schedule: ScheduleSlot[];
   location: Location | null;
   course_type: "major" | "easy";
+  category: "regular" | "pe";
+  required: boolean;
   delivery_mode: "线下传统" | "线上网课" | "线上线下混合";
   semester: string;
 }
 
 // Mirrors backend models/schedule.py ScoreBreakdown
 export interface ScoreBreakdown {
-  gpa_score: number;
-  compact_score: number;
-  stress_score: number;
-  free_score: number;
-  morning_penalty: number;
-  friday_penalty: number;
-  monday_penalty: number;
-  afternoon_penalty: number;
+// Schedule-focused metrics (current)
+  free_days: number;
+  compactness: number;
+  no_morning: number;
+  no_night: number;
+  distribution: number;
+  // Legacy fields (reserved for future GPA/teacher modules)
+  gpa_score?: number;
+  compact_score?: number;
+  stress_score?: number;
+  free_score?: number;
+  morning_penalty?: number;
+  friday_penalty?: number;
+  monday_penalty?: number;
+  afternoon_penalty?: number;
 }
 
 // Mirrors backend models/schedule.py PlanAnalysis
@@ -62,7 +71,15 @@ export interface Plan {
   label: string;
   courses: Course[];
   analysis: PlanAnalysis;
-  matched_strategies: string[]; // strategy IDs, not full objects
+  matched_strategies: string[];
+  llm_review?: {
+    overall: string;
+    score: number;
+    pros: string[];
+    cons: string[];
+    suggestions: string[];
+    best_for: string;
+  } | null; // strategy IDs, not full objects
 }
 
 // Mirrors backend models/response.py GenerateResponse

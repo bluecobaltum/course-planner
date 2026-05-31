@@ -12,6 +12,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 
 from models.course import Course
+from services.course_classifier import apply_classification
 
 router = APIRouter(prefix="/api", tags=["courses"])
 
@@ -44,7 +45,7 @@ async def create_course(course: Course) -> dict:
             detail=f"班号 {course.section_id} 已存在",
         )
 
-    course_dict = course.model_dump()
+    course_dict = apply_classification(course.model_dump())
     courses.append(course_dict)
     _write_courses(courses)
     return course_dict
@@ -56,7 +57,7 @@ async def update_course(section_id: str, course: Course) -> dict:
 
     for i, c in enumerate(courses):
         if c["section_id"] == section_id:
-            course_dict = course.model_dump()
+            course_dict = apply_classification(course.model_dump())
             courses[i] = course_dict
             _write_courses(courses)
             return course_dict

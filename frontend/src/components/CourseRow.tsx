@@ -42,6 +42,11 @@ export default function CourseRow({ course }: CourseRowProps) {
           >
             {course.delivery_mode}
           </Badge>
+          {course.required && (
+            <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-1.5 py-0 shrink-0">
+              必选
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-3 mt-0.5 text-xs text-text-tertiary">

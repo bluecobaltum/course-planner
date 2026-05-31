@@ -1,9 +1,9 @@
 const LABELS: Record<string, string[]> = {
-  gpa_focus: ["GPA King", "稳健高分流", "生存优先方案"],
-  no_morning: ["睡眠守护者", "平衡方案", "极限 GPA 方案"],
-  long_weekend: ["周末战神", "三天假期方案", "折中方案"],
-  balanced: ["时间管理大师", "紧凑方案", "灵活方案"],
-  easy_mode: ["躺平冠军", "低压方案", "轻度勤奋"],
+  balanced:   ["均衡方案", "日常优选", "弹性方案"],
+  no_morning: ["睡眠守护者", "自然醒方案", "早课最少"],
+  compact:    ["时间管理大师", "紧凑方案", "高效方案"],
+  leisurely:  ["自由之翼", "休闲冠军", "压缩方案"],
+  no_night:   ["晚间自由", "早睡方案", "夜课最少"],
 };
 
 export function getPlanLabel(scenario: string, rank: number): string {

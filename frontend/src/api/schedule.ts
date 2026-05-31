@@ -5,20 +5,38 @@ const API_BASE = "http://localhost:8000";
 
 export async function generateSchedule(
   scenario: string,
-  easyCount: number
+  easyCount: number,
+  llmEvaluate: boolean = false,
+  llmModel: string = "",
+  llmPrompt: string | null = null,
 ): Promise<GenerateResponse> {
-  const res = await fetch(`${API_BASE}/api/generate_schedule`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ scenario, easy_count: easyCount }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `API error: ${res.status}`);
+  const body: Record<string, unknown> = { scenario, easy_count: easyCount, llm_evaluate: llmEvaluate };
+  if (llmEvaluate) body.llm_schedule = true;
+  if (llmModel) body.llm_model = llmModel;
+  if (llmPrompt) body.llm_prompt = llmPrompt;
+  const controller = new AbortController();
+  const timeout = llmEvaluate ? 120000 : 30000; // 120s for LLM, 30s for OR-Tools
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const res = await fetch(`${API_BASE}/api/generate_schedule`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `API error: ${res.status}`);
+    }
+    return res.json();
+  } catch (e) {
+    clearTimeout(timer);
+    if (e instanceof DOMException && e.name === "AbortError") {
+      throw new Error("AI 排课超时（超过 120 秒），请换用更快的模型或关闭 AI 排课");
+    }
+    throw e;
   }
-
-  return res.json();
 }
 
 export async function getStrategies(

@@ -84,6 +84,14 @@ class Course(BaseModel):
     course_type: Literal["major", "easy"] = Field(
         ..., description="'major' = required course, 'easy' = optional/elective"
     )
+    category: Literal["regular", "pe"] = Field(
+        default="regular",
+        description="Auto-detected: 'regular' (专业课/水课) or 'pe' (体育课)"
+    )
+    required: bool = Field(
+        default=False,
+        description="If True, this course MUST be selected. Same-group mutual exclusion still applies."
+    )
     delivery_mode: Literal["线下传统", "线上网课", "线上线下混合"] = Field(
         ...,
         description="Teaching mode: traditional offline / online / blended",

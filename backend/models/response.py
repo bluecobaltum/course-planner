@@ -28,6 +28,22 @@ class GenerateRequest(BaseModel):
         description="Number of easy/elective course groups to include (0-5)",
         examples=[1],
     )
+    llm_evaluate: bool = Field(
+        default=False,
+        description="If True, use LLM to select courses and evaluate the plan",
+    )
+    llm_schedule: bool = Field(
+        default=False,
+        description="If True, use LLM to pick the course combination (not OR-Tools)",
+    )
+    llm_model: str = Field(
+        default="",
+        description="Override LLM model (defaults to LLM_EVAL_MODEL env var)",
+    )
+    llm_prompt: str = Field(
+        default="",
+        description="Custom user prompt for LLM-based course selection",
+    )
 
     @field_validator("scenario")
     @classmethod

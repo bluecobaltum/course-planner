@@ -6,41 +6,64 @@ and returns them with full scoring analysis and strategy matches.
 
 from fastapi import APIRouter
 
-from engine import generate_plans
 from models.course import Course
 from models.schedule import ScoreBreakdown, PlanAnalysis, Plan
 from models.response import GenerateRequest, GenerateResponse
+from schedulers.scheduler_factory import get_scheduler
+from services.plan_evaluator import evaluate_plan
 
 router = APIRouter(prefix="/api", tags=["schedule"])
+
+# Default scheduler (OR-Tools or Legacy via env var)
+_default_scheduler = get_scheduler()
 
 
 @router.post("/generate_schedule", response_model=GenerateResponse)
 async def generate_schedule(request: GenerateRequest) -> GenerateResponse:
-    """Generate top-3 optimized course schedule plans.
+    """Generate top-3 optimized course schedule plans."""
 
-    The request's scenario field is validated by Pydantic before this handler
-    runs, so we know it's a valid scenario ID.
+    model_override = request.llm_model.strip() if request.llm_model else ""
+    custom_prompt = request.llm_prompt.strip() if request.llm_prompt else ""
 
-    Args:
-        request: GenerateRequest with scenario (validated) and easy_count (0-5).
+    # If llm_evaluate + model specified → use LLMScheduler
+    if request.llm_evaluate and request.llm_schedule:
+        from schedulers.llm_scheduler import LLMScheduler
+        llm = LLMScheduler()
+        raw_plans = llm.generate_plans(
+            scenario=request.scenario,
+            easy_count=request.easy_count,
+            model_override=model_override,
+            custom_prompt=custom_prompt,
+        )
+    else:
+        raw_plans = _default_scheduler.generate_plans(
+            scenario=request.scenario,
+            easy_count=request.easy_count,
+        )
 
-    Returns:
-        GenerateResponse with 0-3 Plan objects. An empty plans list
-        means no feasible schedule exists with the current constraints
-        and data (not an error — the frontend should show a retry suggestion).
-    """
-    raw_plans = generate_plans(
-        scenario=request.scenario,
-        easy_count=request.easy_count,
-    )
+        # If default is LLM and returned empty, fall back to OR-Tools
+        if not raw_plans:
+            try:
+                from schedulers.ortools_scheduler import ORToolsScheduler
+                ortools = ORToolsScheduler()
+                raw_plans = ortools.generate_plans(
+                    scenario=request.scenario,
+                    easy_count=request.easy_count,
+                )
+            except Exception:
+                pass
+
+    # Optional LLM evaluation of the top plan
+    if request.llm_evaluate and raw_plans:
+        review = evaluate_plan(raw_plans[0], model_override)
+        if review:
+            raw_plans[0]["llm_review"] = review
 
     # Convert raw plan dicts to Pydantic Plan models
     plans: list[Plan] = []
     for raw in raw_plans:
-        # Convert course dicts to Course models
         courses = [Course(**c) for c in raw["courses"]]
 
-        # Build nested models
         breakdown = ScoreBreakdown(**raw["analysis"]["score_breakdown"])
         analysis = PlanAnalysis(
             total_credits=raw["analysis"]["total_credits"],
@@ -50,15 +73,19 @@ async def generate_schedule(request: GenerateRequest) -> GenerateResponse:
             reasons=raw["analysis"]["reasons"],
         )
 
-        plan = Plan(
-            id=raw["id"],
-            rank=raw["rank"],
-            score=raw["score"],
-            label=raw["label"],
-            courses=courses,
-            analysis=analysis,
-            matched_strategies=raw["matched_strategies"],
-        )
+        plan_kwargs: dict = {
+            "id": raw["id"],
+            "rank": raw["rank"],
+            "score": raw["score"],
+            "label": raw["label"],
+            "courses": courses,
+            "analysis": analysis,
+            "matched_strategies": raw["matched_strategies"],
+        }
+        if raw.get("llm_review"):
+            plan_kwargs["llm_review"] = raw["llm_review"]
+
+        plan = Plan(**plan_kwargs)
         plans.append(plan)
 
     return GenerateResponse(scenario=request.scenario, plans=plans)
