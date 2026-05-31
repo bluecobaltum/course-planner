@@ -51,24 +51,33 @@ export default function ImportResultPreview({
     setRemovedIndices((prev) => new Set([...prev, idx]));
   };
 
+  const [skipped, setSkipped] = useState<string[]>([]);
+
   const handleConfirmImport = async () => {
     setImporting(true);
     setErrors([]);
+    setSkipped([]);
     let count = 0;
     const errs: string[] = [];
+    const skippedNames: string[] = [];
 
     for (const course of visibleCourses) {
       try {
         await createCourse(course);
         count++;
       } catch (e) {
-        errs.push(
-          `${course.course_name}: ${e instanceof Error ? e.message : "导入失败"}`
-        );
+        const msg = e instanceof Error ? e.message : "导入失败";
+        // 409 = duplicate section_id, just skip
+        if (msg.includes("已存在") || msg.includes("409") || msg.includes("duplicate")) {
+          skippedNames.push(course.course_name);
+        } else {
+          errs.push(`${course.course_name}: ${msg}`);
+        }
       }
     }
 
     setImported(count);
+    setSkipped(skippedNames);
     setErrors(errs);
     setImporting(false);
 
@@ -217,10 +226,22 @@ export default function ImportResultPreview({
         </div>
       )}
 
-      {imported > 0 && !importing && errors.length === 0 && (
+      {imported > 0 && !importing && (
         <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700">
           <CheckCircle className="h-4 w-4" />
           成功导入 {imported} 门课程
+          {skipped.length > 0 && (
+            <span className="text-amber-600 ml-1">
+              ，{skipped.length} 门已存在已跳过
+            </span>
+          )}
+        </div>
+      )}
+
+      {skipped.length > 0 && imported === 0 && !importing && (
+        <div className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700">
+          <AlertCircle className="h-4 w-4" />
+          所有 {skipped.length} 门课程均已存在，无需导入
         </div>
       )}
 
